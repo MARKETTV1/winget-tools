@@ -1,84 +1,43 @@
 #===============================================================================
-# Universal App Installer - Works with all installation methods
+# Advanced App Scanner - Check installed apps and latest versions
 # Created by: KARIM ABU RIDA
-# Version: 3.0
+# Version: 1.0
 #===============================================================================
 
 Clear-Host
 
-# قائمة التطبيقات مع روابط مباشرة (بديل لـ winget)
-$AppsList = @(
-    @{Num=1; Name="Google Chrome"; WingetId="Google.Chrome"; 
-      Url="https://dl.google.com/chrome/install/latest/chrome_installer.exe";
-      SilentArg="/silent /install"}
-    
-    @{Num=2; Name="Mozilla Firefox"; WingetId="Mozilla.Firefox";
-      Url="https://download.mozilla.org/?product=firefox-latest&os=win64&lang=en-US";
-      SilentArg="/S"}
-    
-    @{Num=3; Name="Brave Browser"; WingetId="Brave.Brave";
-      Url="https://laptop-updates.brave.com/latest/winx64";
-      SilentArg="/silent /install"}
-    
-    @{Num=4; Name="Microsoft Edge"; WingetId="Microsoft.Edge";
-      Url="https://go.microsoft.com/fwlink/?linkid=2108834&Channel=Stable&language=en-us&Consent=1";
-      SilentArg="/silent /install"}
-    
-    @{Num=5; Name="Visual Studio Code"; WingetId="Microsoft.VisualStudioCode";
-      Url="https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user";
-      SilentArg="/verysilent /suppressmsgboxes"}
-    
-    @{Num=6; Name="7-Zip"; WingetId="7zip.7zip";
-      Url="https://www.7-zip.org/a/7z2409-x64.exe";
-      SilentArg="/S"}
-    
-    @{Num=7; Name="VLC Media Player"; WingetId="VideoLAN.VLC";
-      Url="https://get.videolan.org/vlc/last/win64/vlc-latest-win64.exe";
-      SilentArg="/S"}
-    
-    @{Num=8; Name="Discord"; WingetId="Discord.Discord";
-      Url="https://discord.com/api/download?platform=win";
-      SilentArg="/S"}
-    
-    @{Num=9; Name="Spotify"; WingetId="Spotify.Spotify";
-      Url="https://download.scdn.co/SpotifySetup.exe";
-      SilentArg="/silent"}
-    
-    @{Num=10; Name="Telegram"; WingetId="Telegram.TelegramDesktop";
-      Url="https://telegram.org/dl/desktop/win64";
-      SilentArg="/VERYSILENT /SUPPRESSMSGBOXES"}
-    
-    @{Num=11; Name="Zoom"; WingetId="Zoom.Zoom";
-      Url="https://zoom.us/client/latest/ZoomInstaller.exe";
-      SilentArg="/silent"}
-    
-    @{Num=12; Name="Slack"; WingetId="Slack.Slack";
-      Url="https://slack.com/ssb/download-win64";
-      SilentArg="/S"}
-    
-    @{Num=13; Name="Git"; WingetId="Git.Git";
-      Url="https://github.com/git-for-windows/git/releases/latest/download/Git-2.47.1-64-bit.exe";
-      SilentArg="/VERYSILENT /NORESTART"}
-    
-    @{Num=14; Name="Node.js"; WingetId="OpenJS.NodeJS";
-      Url="https://nodejs.org/dist/latest/node-v23.3.0-x64.msi";
-      SilentArg="/quiet"}
-    
-    @{Num=15; Name="Python"; WingetId="Python.Python.3";
-      Url="https://www.python.org/ftp/python/3.13.1/python-3.13.1-amd64.exe";
-      SilentArg="/quiet InstallAllUsers=1 PrependPath=1"}
-    
-    @{Num=16; Name="Notepad++"; WingetId="Notepad++.Notepad++";
-      Url="https://github.com/notepad-plus-plus/notepad-plus-plus/releases/latest/download/npp.8.7.5.Installer.x64.exe";
-      SilentArg="/S"}
-    
-    @{Num=17; Name="Steam"; WingetId="Valve.Steam";
-      Url="https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe";
-      SilentArg="/S"}
-    
-    @{Num=18; Name="Epic Games"; WingetId="EpicGames.EpicGamesLauncher";
-      Url="https://launcher-public-service-prod06.ol.epicgames.com/launcher/api/installer/download/EpicGamesLauncherInstaller.msi";
-      SilentArg="/quiet"}
+# قائمة التطبيقات للمراقبة
+$AppsToMonitor = @(
+    @{Num=1; Name="Google Chrome"; WingetId="Google.Chrome"; Category="Browser"}
+    @{Num=2; Name="Mozilla Firefox"; WingetId="Mozilla.Firefox"; Category="Browser"}
+    @{Num=3; Name="Brave Browser"; WingetId="Brave.Brave"; Category="Browser"}
+    @{Num=4; Name="Microsoft Edge"; WingetId="Microsoft.Edge"; Category="Browser"}
+    @{Num=5; Name="Visual Studio Code"; WingetId="Microsoft.VisualStudioCode"; Category="Development"}
+    @{Num=6; Name="7-Zip"; WingetId="7zip.7zip"; Category="Utilities"}
+    @{Num=7; Name="VLC Media Player"; WingetId="VideoLAN.VLC"; Category="Media"}
+    @{Num=8; Name="Discord"; WingetId="Discord.Discord"; Category="Communication"}
+    @{Num=9; Name="Spotify"; WingetId="Spotify.Spotify"; Category="Media"}
+    @{Num=10; Name="Telegram"; WingetId="Telegram.TelegramDesktop"; Category="Communication"}
+    @{Num=11; Name="Zoom"; WingetId="Zoom.Zoom"; Category="Communication"}
+    @{Num=12; Name="Slack"; WingetId="Slack.Slack"; Category="Communication"}
+    @{Num=13; Name="Git"; WingetId="Git.Git"; Category="Development"}
+    @{Num=14; Name="Node.js"; WingetId="OpenJS.NodeJS"; Category="Development"}
+    @{Num=15; Name="Python"; WingetId="Python.Python.3"; Category="Development"}
+    @{Num=16; Name="Notepad++"; WingetId="Notepad++.Notepad++"; Category="Text Editor"}
+    @{Num=17; Name="GIMP"; WingetId="GIMP.GIMP"; Category="Graphics"}
+    @{Num=18; Name="Steam"; WingetId="Valve.Steam"; Category="Gaming"}
+    @{Num=19; Name="Epic Games"; WingetId="EpicGames.EpicGamesLauncher"; Category="Gaming"}
+    @{Num=20; Name="OBS Studio"; WingetId="OBSProject.OBSStudio"; Category="Streaming"}
+    @{Num=21; Name="Blender"; WingetId="BlenderFoundation.Blender"; Category="3D"}
+    @{Num=22; Name="Adobe Reader"; WingetId="Adobe.Acrobat.Reader.64-bit"; Category="PDF"}
+    @{Num=23; Name="WinRAR"; WingetId="WinRAR.WinRAR"; Category="Utilities"}
+    @{Num=24; Name="qBittorrent"; WingetId="qBittorrent.qBittorrent"; Category="Download"}
+    @{Num=25; Name="FileZilla"; WingetId="FileZilla.Client.FTP"; Category="FTP"}
+    @{Num=26; Name="TeamViewer"; WingetId="TeamViewer.TeamViewer"; Category="Remote"}
+    @{Num=27; Name="Putty"; WingetId="PuTTY.PuTTY"; Category="Network"}
+    @{Num=28; Name="Wireshark"; WingetId="WiresharkFoundation.Wireshark"; Category="Network"}
+    @{Num=29; Name="VirtualBox"; WingetId="Oracle.VirtualBox"; Category="Virtualization"}
+    @{Num=30; Name="Docker Desktop"; WingetId="Docker.DockerDesktop"; Category="Development"}
 )
 
 function Show-Signature {
@@ -95,104 +54,251 @@ function Show-Signature {
     Write-Host "                                                                  " -ForegroundColor DarkGray
 }
 
-function Download-And-Install {
-    param($App)
-    
-    Write-Host ">>> Installing $($App.Name)..." -ForegroundColor Cyan
-    
-    # تحميل الملف
-    $installer = "$env:TEMP\$($App.Name -replace ' ', '_')_installer.exe"
-    if ($App.Url -match "\.msi$") {
-        $installer = "$env:TEMP\$($App.Name -replace ' ', '_')_installer.msi"
-    }
-    
-    Write-Host "    Downloading..." -ForegroundColor Gray
+function Get-InstalledVersion {
+    param($WingetId)
     try {
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        Invoke-WebRequest -Uri $App.Url -OutFile $installer -UseBasicParsing -ErrorAction Stop
-        Write-Host "    Download complete!" -ForegroundColor Gray
-    } catch {
-        Write-Host "[✗] Failed to download $($App.Name)" -ForegroundColor Red
-        return $false
+        $result = winget list --id $WingetId --accept-source-agreements 2>$null
+        $lines = $result -split "`n"
+        foreach ($line in $lines) {
+            if ($line -match "$WingetId\s+(\S+)") {
+                return $matches[1]
+            }
+        }
+    } catch {}
+    return "غير مثبت"
+}
+
+function Get-LatestVersion {
+    param($WingetId)
+    try {
+        $result = winget show $WingetId --accept-source-agreements 2>$null
+        if ($result -match "Version:\s*(\S+)") {
+            return $matches[1]
+        }
+    } catch {}
+    return "غير معروف"
+}
+
+function Compare-Versions {
+    param($Installed, $Latest)
+    
+    if ($Installed -eq "غير مثبت") { return "NOT_INSTALLED" }
+    if ($Latest -eq "غير معروف") { return "UNKNOWN" }
+    if ($Installed -eq $Latest) { return "UPDATED" }
+    
+    # مقارنة بسيطة للأرقام
+    $installedParts = $Installed -split '\.'
+    $latestParts = $Latest -split '\.'
+    
+    for ($i = 0; $i -lt [Math]::Min($installedParts.Length, $latestParts.Length); $i++) {
+        $instNum = [int]$installedParts[$i]
+        $latNum = [int]$latestParts[$i]
+        if ($latNum -gt $instNum) { return "UPDATE_AVAILABLE" }
+        if ($instNum -gt $latNum) { return "NEWER_THAN_LATEST" }
     }
     
-    # تثبيت الملف
-    Write-Host "    Installing..." -ForegroundColor Gray
+    if ($latestParts.Length -gt $installedParts.Length) { return "UPDATE_AVAILABLE" }
+    if ($installedParts.Length -gt $latestParts.Length) { return "NEWER_THAN_LATEST" }
     
-    if ($installer -match "\.msi$") {
-        $process = Start-Process "msiexec" -ArgumentList "/i `"$installer`" $($App.SilentArg) /norestart" -Wait -PassThru -NoNewWindow
-    } else {
-        $process = Start-Process $installer -ArgumentList $App.SilentArg -Wait -PassThru -NoNewWindow
-    }
-    
-    # تنظيف
-    Remove-Item $installer -Force -ErrorAction SilentlyContinue
-    
-    if ($process.ExitCode -eq 0) {
-        Write-Host "[✓] $($App.Name) installed successfully!" -ForegroundColor Green
-        return $true
-    } else {
-        Write-Host "[!] $($App.Name) may already be installed (Exit: $($process.ExitCode))" -ForegroundColor Yellow
-        return $true
+    return "UPDATED"
+}
+
+function Get-StatusText {
+    param($Status)
+    switch ($Status) {
+        "NOT_INSTALLED" { return @{Text="[غير مثبت]"; Color="DarkGray"} }
+        "UPDATE_AVAILABLE" { return @{Text="[تحديث متاح]"; Color="Yellow"} }
+        "UPDATED" { return @{Text="[محدث]"; Color="Green"} }
+        "NEWER_THAN_LATEST" { return @{Text="[أحدث من المتاح]"; Color="Cyan"} }
+        default { return @{Text="[غير معروف]"; Color="Red"} }
     }
 }
 
-function Show-AppsList {
+function Scan-System {
     Clear-Host
     Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "                    Available Applications" -ForegroundColor White
+    Write-Host "                    Scanning System for Installed Apps" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "  No.  Application Name" -ForegroundColor Yellow
-    Write-Host "  ---  ----------------------------------------" -ForegroundColor DarkGray
+    Write-Host "This may take a few moments... (requires internet for latest versions)" -ForegroundColor Yellow
+    Write-Host ""
     
-    foreach ($app in $AppsList) {
-        Write-Host "  $($app.Num)    $($app.Name)" -ForegroundColor White
+    $results = @()
+    $total = $AppsToMonitor.Count
+    $current = 0
+    
+    foreach ($app in $AppsToMonitor) {
+        $current++
+        Write-Progress -Activity "Scanning applications..." -Status "$($app.Name)" -PercentComplete (($current / $total) * 100)
+        
+        $installed = Get-InstalledVersion -WingetId $app.WingetId
+        $latest = Get-LatestVersion -WingetId $app.WingetId
+        $status = Compare-Versions -Installed $installed -Latest $latest
+        
+        $results += [PSCustomObject]@{
+            Num = $app.Num
+            Name = $app.Name
+            Category = $app.Category
+            Installed = $installed
+            Latest = $latest
+            Status = $status
+        }
     }
     
-    Write-Host ""
-    Write-Host "================================================================================" -ForegroundColor Cyan
-}
-
-# Main menu
-do {
+    Write-Progress -Activity "Scanning applications..." -Completed
+    
+    # عرض النتائج
     Clear-Host
     Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "              Universal App Installer (Direct Download)" -ForegroundColor White
+    Write-Host "                    System Scan Results" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "   [1] Show all applications" -ForegroundColor Green
-    Write-Host "   [2] Install application(s) by number" -ForegroundColor Cyan
-    Write-Host "   [3] Install all applications" -ForegroundColor Magenta
-    Write-Host "   [4] Exit" -ForegroundColor Red
+    
+    # إحصائيات
+    $stats = @{
+        Installed = ($results | Where-Object { $_.Installed -ne "غير مثبت" }).Count
+        NotInstalled = ($results | Where-Object { $_.Installed -eq "غير مثبت" }).Count
+        UpdatesAvailable = ($results | Where-Object { $_.Status -eq "UPDATE_AVAILABLE" }).Count
+        UpToDate = ($results | Where-Object { $_.Status -eq "UPDATED" }).Count
+    }
+    
+    Write-Host "📊 STATISTICS:" -ForegroundColor Magenta
+    Write-Host "   ✅ Installed Apps      : $($stats.Installed)" -ForegroundColor Green
+    Write-Host "   ❌ Not Installed Apps  : $($stats.NotInstalled)" -ForegroundColor DarkGray
+    Write-Host "   🔄 Updates Available   : $($stats.UpdatesAvailable)" -ForegroundColor Yellow
+    Write-Host "   ✓ Up to Date           : $($stats.UpToDate)" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "  Examples: 1,2,3  or  1 2 3  or  1,2,3,9,15" -ForegroundColor Gray
+    Write-Host ""
+    
+    # عرض حسب الفئة
+    $categories = $results | Group-Object Category | Sort-Object Name
+    
+    foreach ($cat in $categories) {
+        Write-Host "┌─ $($cat.Name) ─────────────────────────────────────────────────────────" -ForegroundColor Magenta
+        
+        foreach ($app in ($cat.Group | Sort-Object Name)) {
+            $statusInfo = Get-StatusText -Status $app.Status
+            
+            # رقم التطبيق
+            Write-Host "│ [$($app.Num)] " -NoNewline -ForegroundColor Cyan
+            
+            # اسم التطبيق
+            Write-Host "$($app.Name.PadRight(22))" -NoNewline -ForegroundColor White
+            
+            # الإصدار المثبت
+            if ($app.Installed -ne "غير مثبت") {
+                Write-Host " Installed: $($app.Installed.PadRight(15))" -NoNewline -ForegroundColor Gray
+            } else {
+                Write-Host " Installed: -----------" -NoNewline -ForegroundColor DarkGray
+            }
+            
+            # أحدث إصدار
+            Write-Host " Latest: $($app.Latest.PadRight(15))" -NoNewline -ForegroundColor Green
+            
+            # الحالة
+            Write-Host " $($statusInfo.Text)" -ForegroundColor $statusInfo.Color
+        }
+        Write-Host "└─────────────────────────────────────────────────────────────────────────" -ForegroundColor Magenta
+        Write-Host ""
+    }
+    
+    return $results
+}
+
+function Show-MainMenu {
+    Clear-Host
+    Show-Signature
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host "              Advanced App Scanner & Installer" -ForegroundColor White
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "   [1] Scan system and show all apps with versions" -ForegroundColor Green
+    Write-Host "   [2] Show only apps with available updates" -ForegroundColor Yellow
+    Write-Host "   [3] Show only installed apps" -ForegroundColor Cyan
+    Write-Host "   [4] Show only missing apps" -ForegroundColor DarkGray
+    Write-Host "   [5] Install apps by number" -ForegroundColor Magenta
+    Write-Host "   [6] Update all outdated apps" -ForegroundColor Yellow
+    Write-Host "   [7] Exit" -ForegroundColor Red
+    Write-Host ""
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                         Developed by: KARIM ABU RIDA" -ForegroundColor Yellow
     Write-Host "================================================================================" -ForegroundColor Cyan
-    
-    $choice = Read-Host "`nEnter your choice (1-4)"
+}
+
+# المتغيرات العامة
+$global:ScanResults = $null
+
+do {
+    Show-MainMenu
+    $choice = Read-Host "`nEnter your choice (1-7)"
     
     switch ($choice) {
         "1" {
-            Show-AppsList
+            $global:ScanResults = Scan-System
             Read-Host "`nPress Enter to continue"
         }
         "2" {
-            Show-AppsList
-            Write-Host ""
-            $input = Read-Host "Enter numbers (spaces or commas)"
+            if ($null -eq $global:ScanResults) {
+                Write-Host "Please scan first (option 1)" -ForegroundColor Yellow
+                Read-Host "Press Enter"
+                continue
+            }
+            $updates = $global:ScanResults | Where-Object { $_.Status -eq "UPDATE_AVAILABLE" }
+            if ($updates.Count -eq 0) {
+                Write-Host "`nNo updates available! All apps are up to date." -ForegroundColor Green
+            } else {
+                Write-Host "`n📦 Apps with available updates ($($updates.Count)):`n" -ForegroundColor Yellow
+                foreach ($app in $updates) {
+                    Write-Host "   [$($app.Num)] $($app.Name)" -ForegroundColor White
+                    Write-Host "       Installed: $($app.Installed) → Latest: $($app.Latest)" -ForegroundColor Gray
+                }
+            }
+            Read-Host "`nPress Enter to continue"
+        }
+        "3" {
+            if ($null -eq $global:ScanResults) {
+                Write-Host "Please scan first (option 1)" -ForegroundColor Yellow
+                Read-Host "Press Enter"
+                continue
+            }
+            $installed = $global:ScanResults | Where-Object { $_.Installed -ne "غير مثبت" }
+            Write-Host "`n✅ Installed apps ($($installed.Count)):`n" -ForegroundColor Green
+            foreach ($app in $installed) {
+                Write-Host "   [$($app.Num)] $($app.Name) - Version: $($app.Installed)" -ForegroundColor White
+            }
+            Read-Host "`nPress Enter to continue"
+        }
+        "4" {
+            if ($null -eq $global:ScanResults) {
+                Write-Host "Please scan first (option 1)" -ForegroundColor Yellow
+                Read-Host "Press Enter"
+                continue
+            }
+            $missing = $global:ScanResults | Where-Object { $_.Installed -eq "غير مثبت" }
+            Write-Host "`n❌ Missing apps ($($missing.Count)):`n" -ForegroundColor DarkGray
+            foreach ($app in $missing) {
+                Write-Host "   [$($app.Num)] $($app.Name)" -ForegroundColor White
+            }
+            Read-Host "`nPress Enter to continue"
+        }
+        "5" {
+            if ($null -eq $global:ScanResults) {
+                Write-Host "Please scan first (option 1)" -ForegroundColor Yellow
+                Read-Host "Press Enter"
+                continue
+            }
+            Write-Host "`nEnter numbers of apps to install (e.g., 1,2,3 or 1 2 3)" -ForegroundColor Gray
+            $input = Read-Host "Numbers"
             
-            # Parse numbers
             $input = $input -replace " ", ","
             $selected = @()
             foreach ($num in ($input -split ",")) {
                 $n = $num.Trim()
                 if ($n -match "^\d+$") {
-                    $app = $AppsList | Where-Object { $_.Num -eq [int]$n }
+                    $app = $global:ScanResults | Where-Object { $_.Num -eq [int]$n }
                     if ($app) { $selected += $app }
                 }
             }
@@ -204,44 +310,60 @@ do {
             }
             
             Write-Host "`nSelected:" -ForegroundColor Green
-            foreach ($app in $selected) { 
+            foreach ($app in $selected) {
                 Write-Host "  - $($app.Name)" -ForegroundColor White
             }
             
-            $confirm = Read-Host "`nInstall? (y/n)"
+            $confirm = Read-Host "`nInstall selected apps? (y/n)"
             if ($confirm -ne "y") { Write-Host "Cancelled." -ForegroundColor Red; Read-Host; continue }
             
-            Write-Host "`nStarting installation...`n" -ForegroundColor Yellow
-            
-            $success = 0
-            $fail = 0
+            Write-Host "`nInstalling...`n" -ForegroundColor Yellow
             foreach ($app in $selected) {
-                if (Download-And-Install -App $app) { $success++ } else { $fail++ }
+                Write-Host ">>> Installing $($app.Name)..." -ForegroundColor Cyan
+                winget install $app.WingetId --accept-package-agreements --accept-source-agreements --silent
+                if ($LASTEXITCODE -eq 0 -or $LASTEXITCODE -eq 1 -or $LASTEXITCODE -eq -1978335189) {
+                    Write-Host "[✓] Done!" -ForegroundColor Green
+                } else {
+                    Write-Host "[✗] Failed!" -ForegroundColor Red
+                }
                 Write-Host ""
             }
-            
-            Write-Host "================================================================================" -ForegroundColor Cyan
-            Write-Host "Completed: $success successful, $fail failed" -ForegroundColor $(if ($fail -eq 0) { "Green" } else { "Yellow" })
-            Write-Host "================================================================================" -ForegroundColor Cyan
-            Read-Host "`nPress Enter to continue"
+            # إعادة المسح بعد التثبيت
+            $global:ScanResults = Scan-System
+            Read-Host "Press Enter to continue"
         }
-        "3" {
-            Write-Host "`nInstalling all applications..." -ForegroundColor Yellow
-            Write-Host "This may take a while...`n" -ForegroundColor Gray
-            
-            $success = 0
-            $fail = 0
-            foreach ($app in $AppsList) {
-                if (Download-And-Install -App $app) { $success++ } else { $fail++ }
-                Write-Host ""
+        "6" {
+            if ($null -eq $global:ScanResults) {
+                Write-Host "Please scan first (option 1)" -ForegroundColor Yellow
+                Read-Host "Press Enter"
+                continue
+            }
+            $toUpdate = $global:ScanResults | Where-Object { $_.Status -eq "UPDATE_AVAILABLE" }
+            if ($toUpdate.Count -eq 0) {
+                Write-Host "`nNo updates available!" -ForegroundColor Green
+                Read-Host "Press Enter"
+                continue
             }
             
-            Write-Host "================================================================================" -ForegroundColor Cyan
-            Write-Host "Completed: $success successful, $fail failed" -ForegroundColor $(if ($fail -eq 0) { "Green" } else { "Yellow" })
-            Write-Host "================================================================================" -ForegroundColor Cyan
-            Read-Host "`nPress Enter to continue"
+            Write-Host "`nApps to update ($($toUpdate.Count)):" -ForegroundColor Yellow
+            foreach ($app in $toUpdate) {
+                Write-Host "  - $($app.Name): $($app.Installed) → $($app.Latest)" -ForegroundColor White
+            }
+            
+            $confirm = Read-Host "`nUpdate all? (y/n)"
+            if ($confirm -ne "y") { Write-Host "Cancelled." -ForegroundColor Red; Read-Host; continue }
+            
+            Write-Host "`nUpdating...`n" -ForegroundColor Yellow
+            foreach ($app in $toUpdate) {
+                Write-Host ">>> Updating $($app.Name)..." -ForegroundColor Cyan
+                winget upgrade $app.WingetId --accept-package-agreements --accept-source-agreements --silent
+                Write-Host ""
+            }
+            # إعادة المسح بعد التحديث
+            $global:ScanResults = Scan-System
+            Read-Host "Press Enter to continue"
         }
-        "4" {
+        "7" {
             Write-Host "Exiting... Goodbye!" -ForegroundColor Green
             break
         }
@@ -250,4 +372,4 @@ do {
             Start-Sleep -Seconds 1
         }
     }
-} while ($choice -ne "4")
+} while ($choice -ne "7")
