@@ -1,6 +1,6 @@
 #===============================================================================
 # KARIM ABU RIDA - All-in-One Windows Manager
-# Version: 5.3
+# Version: 5.4
 # Tools: System Info + Winget Manager + App Scanner/Installer + IDM Activation
 # GitHub: MARKETTV1
 #===============================================================================
@@ -22,47 +22,34 @@ function Show-Signature {
 }
 
 #===============================================================================
-# SYSTEM INFORMATION DASHBOARD (CORRECTED WINDOWS VERSION)
+# SYSTEM INFORMATION DASHBOARD (Displayed once at startup)
 #===============================================================================
 function Get-CorrectWindowsVersion {
     $regPath = "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion"
     
-    # Get build number
     $build = (Get-ItemProperty -Path $regPath -Name CurrentBuild -ErrorAction SilentlyContinue).CurrentBuild
     $buildInt = [int]$build
     
-    # Get product name from registry
     $productName = (Get-ItemProperty -Path $regPath -Name ProductName -ErrorAction SilentlyContinue).ProductName
-    
-    # Get DisplayVersion (e.g., 22H2, 23H2, 24H2)
     $displayVersion = (Get-ItemProperty -Path $regPath -Name DisplayVersion -ErrorAction SilentlyContinue).DisplayVersion
-    
-    # Get ReleaseId (older Windows 10 versions)
     $releaseId = (Get-ItemProperty -Path $regPath -Name ReleaseId -ErrorAction SilentlyContinue).ReleaseId
     
-    # Determine correct Windows name based on build number
     if ($buildInt -ge 22000) {
-        # Windows 11 builds start from 22000
         $windowsName = "Windows 11"
-        # Extract edition from product name (remove "Windows 10" or "Windows 11" prefix)
         $edition = $productName -replace "Windows 10 ", "" -replace "Windows 11 ", ""
         $finalName = "Windows 11 $edition"
     } elseif ($buildInt -ge 10240) {
-        # Windows 10 builds
         $windowsName = "Windows 10"
         $edition = $productName -replace "Windows 10 ", ""
         $finalName = "Windows 10 $edition"
     } elseif ($buildInt -ge 9200) {
-        $windowsName = "Windows 8.1"
-        $finalName = $windowsName
+        $finalName = "Windows 8.1"
     } elseif ($buildInt -ge 7600) {
-        $windowsName = "Windows 7"
-        $finalName = $windowsName
+        $finalName = "Windows 7"
     } else {
         $finalName = $productName
     }
     
-    # Get version friendly name (22H2, 23H2, etc.)
     $versionFriendly = ""
     if ($displayVersion) {
         $versionFriendly = $displayVersion
@@ -141,7 +128,7 @@ function Show-SystemInfo {
     Write-Host "  👤  Current User         : " -NoNewline -ForegroundColor Yellow
     Write-Host "$userName" -ForegroundColor White
 
-    # Windows Version (CORRECTED)
+    # Windows Version
     $winInfo = Get-CorrectWindowsVersion
     Write-Host "  🪟  Windows Version      : " -NoNewline -ForegroundColor Yellow
     Write-Host "$($winInfo.FullName) (Build $($winInfo.Build))" -ForegroundColor White
@@ -441,7 +428,6 @@ function Get-LatestVersion { param($App)
 function Show-AllSystemApps {
     Clear-Host
     Show-Signature
-    Show-SystemInfo
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                All Installed Applications - Version Viewer" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
@@ -516,7 +502,6 @@ function Show-AllSystemApps {
 function Update-Selective {
     Clear-Host
     Show-Signature
-    Show-SystemInfo
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                   Selective Winget Update Manager" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
@@ -589,7 +574,6 @@ function Update-Selective {
 function Show-AppsList {
     Clear-Host
     Show-Signature
-    Show-SystemInfo
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                    Available Applications (Three Columns)" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan; Write-Host ""
@@ -619,7 +603,6 @@ function Show-AppsList {
 function Scan-InstalledApps {
     Clear-Host
     Show-Signature
-    Show-SystemInfo
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                    Scanning Installed Applications" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
@@ -650,7 +633,6 @@ function Scan-InstalledApps {
 
     Clear-Host
     Show-Signature
-    Show-SystemInfo
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                    Installed Applications Report" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
@@ -710,7 +692,6 @@ function Install-ByNumbers {
 function Run-IDMActivation {
     Clear-Host
     Show-Signature
-    Show-SystemInfo
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                   IDM Activation Script (IAS)" -ForegroundColor Magenta
     Write-Host "================================================================================" -ForegroundColor Cyan
@@ -752,9 +733,8 @@ function Run-IDMActivation {
 function Show-MainMenu {
     Clear-Host
     Show-Signature
-    Show-SystemInfo
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "              All-in-One Windows Manager v5.3 - by KARIM ABU RIDA" -ForegroundColor White
+    Write-Host "              All-in-One Windows Manager v5.4 - by KARIM ABU RIDA" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "   ── WINGET MANAGER ─────────────────────────────────────────────" -ForegroundColor DarkGray
@@ -777,7 +757,7 @@ function Show-MainMenu {
 }
 
 #===============================================================================
-# INITIAL SYSTEM INFO DISPLAY (Before main menu)
+# INITIAL SYSTEM INFO DISPLAY (Once at startup)
 #===============================================================================
 Show-Signature
 Show-SystemInfo
