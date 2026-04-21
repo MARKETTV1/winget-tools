@@ -20,7 +20,7 @@ function Show-Signature {
     Write-Host "                                                                  " -ForegroundColor DarkGray
 }
 
-# List of apps
+# List of apps (you can add more here)
 $AppsList = @(
     @{Num=1; Name="Google Chrome"; Id="Google.Chrome"}
     @{Num=2; Name="Mozilla Firefox"; Id="Mozilla.Firefox"}
@@ -47,6 +47,42 @@ $AppsList = @(
     @{Num=23; Name="WinRAR"; Id="WinRAR.WinRAR"}
     @{Num=24; Name="qBittorrent"; Id="qBittorrent.qBittorrent"}
     @{Num=25; Name="FileZilla"; Id="FileZilla.Client.FTP"}
+    # NEW APPS START HERE
+    @{Num=26; Name="WhatsApp"; Id="WhatsApp.WhatsApp"}
+    @{Num=27; Name="Signal"; Id="Signal.Signal"}
+    @{Num=28; Name="Thunderbird"; Id="Mozilla.Thunderbird"}
+    @{Num=29; Name="LibreOffice"; Id="TheDocumentFoundation.LibreOffice"}
+    @{Num=30; Name="Audacity"; Id="Audacity.Audacity"}
+    @{Num=31; Name="Inkscape"; Id="Inkscape.Inkscape"}
+    @{Num=32; Name="KeePass"; Id="KeePassXCTeam.KeePassXC"}
+    @{Num=33; Name="Rufus"; Id="Rufus.Rufus"}
+    @{Num=34; Name="CPU-Z"; Id="CPUID.CPU-Z"}
+    @{Num=35; Name="HWMonitor"; Id="CPUID.HWMonitor"}
+    @{Num=36; Name="CrystalDiskInfo"; Id="CrystalDewWorld.CrystalDiskInfo"}
+    @{Num=37; Name="CrystalDiskMark"; Id="CrystalDewWorld.CrystalDiskMark"}
+    @{Num=38; Name="VeraCrypt"; Id="IDRIX.VeraCrypt"}
+    @{Num=39; Name="Everything"; Id="voidtools.Everything"}
+    @{Num=40; Name="ShareX"; Id="ShareX.ShareX"}
+    @{Num=41; Name="HandBrake"; Id="HandBrake.HandBrake"}
+    @{Num=42; Name="Krita"; Id="Krita.Krita"}
+    @{Num=43; Name="Darktable"; Id="darktable.darktable"}
+    @{Num=44; Name="XnView"; Id="XnSoft.XnView"}
+    @{Num=45; Name="IrfanView"; Id="IrfanSkiljan.IrfanView"}
+    @{Num=46; Name="SumatraPDF"; Id="SumatraPDF.SumatraPDF"}
+    @{Num=47; Name="Calibre"; Id="Calibre.Calibre"}
+    @{Num=48; Name="JDownloader"; Id="AppWork.JDownloader"}
+    @{Num=49; Name="Transmission"; Id="Transmission.Transmission"}
+    @{Num=50; Name="TeamViewer"; Id="TeamViewer.TeamViewer"}
+    @{Num=51; Name="Putty"; Id="PuTTY.PuTTY"}
+    @{Num=52; Name="Wireshark"; Id="WiresharkFoundation.Wireshark"}
+    @{Num=53; Name="VirtualBox"; Id="Oracle.VirtualBox"}
+    @{Num=54; Name="Docker Desktop"; Id="Docker.DockerDesktop"}
+    @{Num=55; Name="MySQL Workbench"; Id="Oracle.MySQLWorkbench"}
+    @{Num=56; Name="Postman"; Id="Postman.Postman"}
+    @{Num=57; Name="MongoDB Compass"; Id="MongoDB.Compass"}
+    @{Num=58; Name="GitHub Desktop"; Id="GitHub.GitHubDesktop"}
+    @{Num=59; Name="Figma"; Id="Figma.Figma"}
+    @{Num=60; Name="Unity Hub"; Id="Unity.UnityHub"}
 )
 
 function Show-AllApps {
