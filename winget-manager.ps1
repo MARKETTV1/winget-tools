@@ -1,7 +1,30 @@
-# Integrated Script - Show Apps + Selective Update
+#===============================================================================
+# Winget Manager - Integrated Tool
+# Created by: KARIM ABU RIDA
+# Version: 2.0
+# Description: Show all installed apps and selectively update them using Winget
+#===============================================================================
+
 Clear-Host
 
+# Display signature banner at startup
+function Show-Signature {
+    Write-Host "                                                                  " -ForegroundColor DarkGray
+    Write-Host "   ██╗  ██╗ █████╗ ██████╗ ██╗███╗   ███╗    ██████╗ ██████╗ ██╗██████╗  █████╗ " -ForegroundColor Cyan
+    Write-Host "   ██║ ██╔╝██╔══██╗██╔══██╗██║████╗ ████║    ██╔══██╗██╔══██╗██║██╔══██╗██╔══██╗" -ForegroundColor Cyan
+    Write-Host "   █████╔╝ ███████║██████╔╝██║██╔████╔██║    ██████╔╝██║  ██║██║██║  ██║███████║" -ForegroundColor Cyan
+    Write-Host "   ██╔═██╗ ██╔══██║██╔══██╗██║██║╚██╔╝██║    ██╔══██╗██║  ██║██║██║  ██║██╔══██║" -ForegroundColor Cyan
+    Write-Host "   ██║  ██╗██║  ██║██║  ██║██║██║ ╚═╝ ██║    ██║  ██║██████╔╝██║██████╔╝██║  ██║" -ForegroundColor Cyan
+    Write-Host "   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝    ╚═╝  ╚═╝╚═════╝ ╚═╝╚═════╝ ╚═╝  ╚═╝" -ForegroundColor Cyan
+    Write-Host "                                                                  " -ForegroundColor DarkGray
+    Write-Host "                              Created by: KARIM ABU RIDA           " -ForegroundColor Yellow
+    Write-Host "                              GitHub: MARKETTV1                    " -ForegroundColor Yellow
+    Write-Host "                                                                  " -ForegroundColor DarkGray
+}
+
 function Show-MainMenu {
+    Clear-Host
+    Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                   Winget Manager - Integrated Tool" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
@@ -11,10 +34,13 @@ function Show-MainMenu {
     Write-Host "   [3] Exit" -ForegroundColor Green
     Write-Host ""
     Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host "                         Developed by: KARIM ABU RIDA" -ForegroundColor Yellow
+    Write-Host "================================================================================" -ForegroundColor Cyan
 }
 
 function Show-AllApps {
     Clear-Host
+    Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                All Installed Applications - Version Viewer" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
@@ -164,13 +190,15 @@ function Show-AllApps {
     Write-Host ""
     Write-Host "TOTAL INSTALLED          : $($appsList.Count + $storeList.Count + $registryApps.Count)" -ForegroundColor Green
     Write-Host "================================================================================" -ForegroundColor Cyan
-    
+    Write-Host ""
+    Write-Host "                         Developed by: KARIM ABU RIDA" -ForegroundColor Yellow
     Write-Host ""
     Read-Host "Press Enter to return to main menu"
 }
 
 function Update-Selective {
     Clear-Host
+    Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                   Selective Winget Update Manager" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
@@ -289,6 +317,8 @@ function Update-Selective {
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "Update process completed!" -ForegroundColor Green
     Write-Host ""
+    Write-Host "                         Developed by: KARIM ABU RIDA" -ForegroundColor Yellow
+    Write-Host ""
     Read-Host "Press Enter to return to main menu"
 }
 
@@ -301,8 +331,20 @@ do {
         "1" { Show-AllApps }
         "2" { Update-Selective }
         "3" { 
+            Clear-Host
+            Show-Signature
             Write-Host ""
-            Write-Host "Exiting... Goodbye!" -ForegroundColor Yellow
+            Write-Host "================================================================================" -ForegroundColor Cyan
+            Write-Host "                   Thank you for using Winget Manager!" -ForegroundColor White
+            Write-Host "================================================================================" -ForegroundColor Cyan
+            Write-Host ""
+            Write-Host "                         Developed by: KARIM ABU RIDA" -ForegroundColor Yellow
+            Write-Host "                         GitHub: MARKETTV1" -ForegroundColor Yellow
+            Write-Host "                         Twitter: @KARIM_ABU_RIDA" -ForegroundColor Yellow
+            Write-Host ""
+            Write-Host "Exiting... Goodbye!" -ForegroundColor Green
+            Write-Host ""
+            Start-Sleep -Seconds 3
             break
         }
         default {
