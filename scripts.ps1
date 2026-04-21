@@ -20,7 +20,7 @@ function Show-Signature {
     Write-Host "                                                                  " -ForegroundColor DarkGray
 }
 
-# List of apps (you can add more here)
+# List of apps
 $AppsList = @(
     @{Num=1; Name="Google Chrome"; Id="Google.Chrome"}
     @{Num=2; Name="Mozilla Firefox"; Id="Mozilla.Firefox"}
@@ -73,20 +73,39 @@ $AppsList = @(
     @{Num=49; Name="Transmission"; Id="Transmission.Transmission"}
     @{Num=50; Name="TeamViewer"; Id="TeamViewer.TeamViewer"}
     @{Num=51; Name="Putty"; Id="PuTTY.PuTTY"}
-    @{Num=52; Name="Wireshark"; Id="WiresharkFoundation.Wireshark"}
-    @{Num=53; Name="VirtualBox"; Id="Oracle.VirtualBox"}
-    @{Num=54; Name="Docker Desktop"; Id="Docker.DockerDesktop"}
-    @{Num=55; Name="MySQL Workbench"; Id="Oracle.MySQLWorkbench"}
-    @{Num=56; Name="Postman"; Id="Postman.Postman"}
-    @{Num=57; Name="MongoDB Compass"; Id="MongoDB.Compass"}
-    @{Num=58; Name="GitHub Desktop"; Id="GitHub.GitHubDesktop"}
-    @{Num=59; Name="Figma"; Id="Figma.Figma"}
-    @{Num=60; Name="Unity Hub"; Id="Unity.UnityHub"}
+    @{Num=52; Name="WinSCP"; Id="WinSCP.WinSCP"}
+    @{Num=53; Name="Wireshark"; Id="WiresharkFoundation.Wireshark"}
+    @{Num=54; Name="VirtualBox"; Id="Oracle.VirtualBox"}
+    @{Num=55; Name="Docker Desktop"; Id="Docker.DockerDesktop"}
+    @{Num=56; Name="MySQL Workbench"; Id="Oracle.MySQLWorkbench"}
+    @{Num=57; Name="Postman"; Id="Postman.Postman"}
+    @{Num=58; Name="MongoDB Compass"; Id="MongoDB.Compass"}
+    @{Num=59; Name="GitHub Desktop"; Id="GitHub.GitHubDesktop"}
+    @{Num=60; Name="Figma"; Id="Figma.Figma"}
+    @{Num=61; Name="Unity Hub"; Id="Unity.UnityHub"}
+    @{Num=62; Name="Revo Uninstaller"; Id="RevoGroup.RevoUninstaller"}
+    @{Num=63; Name="PowerISO"; Id="PowerSoftware.PowerISO"}
+    @{Num=64; Name="UltraISO"; Id="EZBSystems.UltraISO"}
+    @{Num=65; Name="SuperCopier"; Id="SuperCopier.SuperCopier"}
+    @{Num=66; Name="UltraCopier"; Id="UltraCopier.UltraCopier"}
+    @{Num=67; Name="Microsoft Teams"; Id="Microsoft.Teams"}
+    @{Num=68; Name="Winshot"; Id="Winshot.Winshot"}
+    @{Num=69; Name="AnyDesk"; Id="AnyDeskSoftwareGmbH.AnyDesk"}
+    @{Num=70; Name="CCleaner"; Id="Piriform.CCleaner"}
+    @{Num=71; Name="Avast Free Antivirus"; Id="AvastSoftware.AvastAntivirus"}
+    @{Num=72; Name="Avira Antivirus"; Id="Avira.Avira"}
+    @{Num=73; Name="ESET NOD32"; Id="ESET.ESETNOD32"}
+    @{Num=74; Name="AVG Antivirus"; Id="AVG.AVGAntivirus"}
+    @{Num=75; Name="CutePDF Writer"; Id="CutePDF.CutePDFWriter"}
+    @{Num=76; Name="OpenOffice"; Id="Apache.OpenOffice"}
+    @{Num=77; Name="PeaZip"; Id="PeaZip.PeaZip"}
+    # NEW APPS
+    @{Num=78; Name="TeraCopy"; Id="CodeSector.TeraCopy"}
+    @{Num=79; Name="Google Earth Pro"; Id="Google.GoogleEarthPro"}
+    @{Num=80; Name="Microsoft Toolkit"; Id="Microsoft.Toolkit"}
     # =============================================
     # ADD NEW APPS BELOW THIS LINE
     # =============================================
-    # @{Num=61; Name="App Name"; Id="App.Id"}
-    # @{Num=62; Name="Another App"; Id="Another.App"}
 )
 
 function Show-AllApps {
