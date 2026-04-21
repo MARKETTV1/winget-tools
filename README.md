@@ -3,4 +3,4 @@
 [![GitHub stars](https://img.shields.io/github/stars/OWNER/REPO)](https://github.com/OWNER/REPO/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/OWNER/REPO)](https://github.com/OWNER/REPO/issues)
 [![GitHub license](https://img.shields.io/github/license/OWNER/REPO)](https://github.com/OWNER/REPO/blob/main/LICENSE)
-[![whatsapp](https://img.shields.io/badge/LinkedIn-Connect-blue)](http://wa.me/212670865351)
+[![whatsapp](https://img.shields.io/badge/whatsapp-Connect-blue)](http://wa.me/212670865351)
