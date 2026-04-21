@@ -1,6 +1,5 @@
-[![GitHub contributors](https://img.shields.io/github/contributors/OWNER/REPO)](https://github.com/OWNER/REPO/graphs/contributors)
-[![GitHub forks](https://img.shields.io/github/forks/OWNER/REPO)](https://github.com/OWNER/REPO/network)
-[![GitHub stars](https://img.shields.io/github/stars/OWNER/REPO)](https://github.com/OWNER/REPO/stargazers)
-[![GitHub issues](https://img.shields.io/github/issues/OWNER/REPO)](https://github.com/OWNER/REPO/issues)
-[![GitHub license](https://img.shields.io/github/license/OWNER/REPO)](https://github.com/OWNER/REPO/blob/main/LICENSE)
+[![Bash Script](https://img.shields.io/badge/Bash-Script-green?logo=gnubash)](https://urli.info/1nXJh)
+
+
+
 [![whatsapp](https://img.shields.io/badge/whatsapp-Connect-blue)](http://wa.me/212670865351)
