@@ -1,6 +1,6 @@
-### winget-tools
-
-''''
-bash
-https://urli.info/1nXJh
-''''
+[![GitHub contributors](https://img.shields.io/github/contributors/OWNER/REPO)](https://github.com/OWNER/REPO/graphs/contributors)
+[![GitHub forks](https://img.shields.io/github/forks/OWNER/REPO)](https://github.com/OWNER/REPO/network)
+[![GitHub stars](https://img.shields.io/github/stars/OWNER/REPO)](https://github.com/OWNER/REPO/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/OWNER/REPO)](https://github.com/OWNER/REPO/issues)
+[![GitHub license](https://img.shields.io/github/license/OWNER/REPO)](https://github.com/OWNER/REPO/blob/main/LICENSE)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://linkedin.com/in/YOUR_PROFILE)
