@@ -1,6 +1,6 @@
 #===============================================================================
 # KARIM ABU RIDA - All-in-One Windows Manager
-# Version: 5.4
+# Version: 5.5
 # Tools: System Info + Winget Manager + App Scanner/Installer + IDM Activation
 # GitHub: MARKETTV1
 #===============================================================================
@@ -297,7 +297,7 @@ function Show-SystemInfo {
 }
 
 #===============================================================================
-# APPS LIST (Winget + Custom)
+# APPS LIST (Winget + Custom) - CORRECTED IDs
 #===============================================================================
 $AppsList = @(
     @{Num=1;  Name="Google Chrome";          Id="Google.Chrome";                          Type="winget"}
@@ -367,12 +367,12 @@ $AppsList = @(
     @{Num=65; Name="TeraCopy";               Id="CodeSector.TeraCopy";                    Type="winget"}
     @{Num=66; Name="Google Earth Pro";       Id="Google.EarthPro";                        Type="winget"}
     @{Num=67; Name="Microsoft Teams";        Id="Microsoft.Teams";                        Type="winget"}
-    @{Num=68; Name="AnyDesk";                Id="AnyDeskSoftwareGmbH.AnyDesk";            Type="winget"}
+    @{Num=68; Name="AnyDesk";                Id="AnyDesk.AnyDesk";                        Type="winget"}  # تم التصحيح
     @{Num=69; Name="CCleaner";               Id="Piriform.CCleaner";                      Type="winget"}
     @{Num=70; Name="Avast Free Antivirus";   Id="AvastSoftware.AvastAntivirus";           Type="winget"}
-    @{Num=71; Name="Avira Antivirus";        Id="Avira.AviraAntivirus";                   Type="winget"}
-    @{Num=72; Name="ESET NOD32";             Id="ESET.ESETNOD32";                         Type="winget"}
-    @{Num=73; Name="AVG Antivirus";          Id="AVG.AVGAntivirus";                       Type="winget"}
+    @{Num=71; Name="Avira Antivirus";        Id="Avira.Avira";                            Type="winget"}  # تم التصحيح
+    @{Num=72; Name="ESET NOD32";             Id="ESET.ESETSmartSecurity";                 Type="winget"}  # تم التصحيح
+    @{Num=73; Name="AVG Antivirus";          Id="AVG.AntivirusFree";                      Type="winget"}  # تم التصحيح
     @{Num=74; Name="CutePDF Writer";         Id="CutePDF.CutePDFWriter";                  Type="winget"}
     @{Num=75; Name="Apache OpenOffice";      Id="Apache.OpenOffice";                      Type="winget"}
     @{Num=76; Name="PeaZip";                 Id="PeaZip.PeaZip";                          Type="winget"}
@@ -679,8 +679,12 @@ function Install-ByNumbers {
         } else {
             Write-Host ">>> Installing $($app.Name)..." -ForegroundColor Cyan
             winget install $app.Id --accept-package-agreements --accept-source-agreements --silent
-            if ($LASTEXITCODE -in 0,1,-1978335189) { Write-Host "[OK] $($app.Name) installed!" -ForegroundColor Green }
-            else { Write-Host "[FAIL] $($app.Name) (Error: $LASTEXITCODE)" -ForegroundColor Red }
+            if ($LASTEXITCODE -in 0,1,-1978335189) {
+                Write-Host "[OK] $($app.Name) installed!" -ForegroundColor Green
+            } else {
+                Write-Host "[FAIL] $($app.Name) (Error: $LASTEXITCODE)" -ForegroundColor Red
+                Write-Host "       Try installing manually from official website" -ForegroundColor Gray
+            }
         }
         Write-Host ""
     }
@@ -734,7 +738,7 @@ function Show-MainMenu {
     Clear-Host
     Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "              All-in-One Windows Manager v5.4 - by KARIM ABU RIDA" -ForegroundColor White
+    Write-Host "              All-in-One Windows Manager v5.5 - by KARIM ABU RIDA" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "   ── WINGET MANAGER ─────────────────────────────────────────────" -ForegroundColor DarkGray
