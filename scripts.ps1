@@ -87,7 +87,7 @@ $AppsList = @(
     @{Num=63; Name="PowerISO"; Id="PowerSoftware.PowerISO"; Type="winget"}
     @{Num=64; Name="UltraISO"; Id="EZBSystems.UltraISO"; Type="winget"}
     @{Num=65; Name="TeraCopy"; Id="CodeSector.TeraCopy"; Type="winget"}
-    @{Num=66; Name="Google Earth Pro"; Id="Google.GoogleEarthPro"; Type="winget"}
+    @{Num=66; Name="Google Earth Pro"; Id="Google.EarthPro"; Type="winget"}  # تم التصحيح
     @{Num=67; Name="Microsoft Teams"; Id="Microsoft.Teams"; Type="winget"}
     @{Num=68; Name="AnyDesk"; Id="AnyDeskSoftwareGmbH.AnyDesk"; Type="winget"}
     @{Num=69; Name="CCleaner"; Id="Piriform.CCleaner"; Type="winget"}
@@ -232,7 +232,6 @@ function Scan-InstalledApps {
         Write-Progress -Activity "Scanning..." -Status $app.Name -PercentComplete (($current / $total) * 100)
         
         if ($app.Type -eq "custom") {
-            # Check if Winshot is installed by looking for the exe
             $winshotPath = "$env:ProgramFiles\Winshot\winshot.exe"
             if (Test-Path $winshotPath) {
                 $version = (Get-Item $winshotPath).VersionInfo.FileVersion
@@ -351,7 +350,8 @@ function Install-ByNumbers {
             if ($LASTEXITCODE -eq 0 -or $LASTEXITCODE -eq 1 -or $LASTEXITCODE -eq -1978335189) {
                 Write-Host "[✓] $($app.Name) installed successfully!" -ForegroundColor Green
             } else {
-                Write-Host "[✗] Failed to install $($app.Name)" -ForegroundColor Red
+                Write-Host "[✗] Failed to install $($app.Name) (Error: $LASTEXITCODE)" -ForegroundColor Red
+                Write-Host "    Try installing manually from the official website." -ForegroundColor Gray
             }
         }
         Write-Host ""
