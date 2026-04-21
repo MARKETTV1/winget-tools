@@ -1,6 +1,6 @@
 #===============================================================================
 # KARIM ABU RIDA - All-in-One Windows Manager
-# Version: 5.0
+# Version: 5.3
 # Tools: System Info + Winget Manager + App Scanner/Installer + IDM Activation
 # GitHub: MARKETTV1
 #===============================================================================
@@ -22,8 +22,109 @@ function Show-Signature {
 }
 
 #===============================================================================
-# SYSTEM INFORMATION DASHBOARD
+# SYSTEM INFORMATION DASHBOARD (CORRECTED WINDOWS VERSION)
 #===============================================================================
+function Get-CorrectWindowsVersion {
+    $regPath = "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion"
+    
+    # Get build number
+    $build = (Get-ItemProperty -Path $regPath -Name CurrentBuild -ErrorAction SilentlyContinue).CurrentBuild
+    $buildInt = [int]$build
+    
+    # Get product name from registry
+    $productName = (Get-ItemProperty -Path $regPath -Name ProductName -ErrorAction SilentlyContinue).ProductName
+    
+    # Get DisplayVersion (e.g., 22H2, 23H2, 24H2)
+    $displayVersion = (Get-ItemProperty -Path $regPath -Name DisplayVersion -ErrorAction SilentlyContinue).DisplayVersion
+    
+    # Get ReleaseId (older Windows 10 versions)
+    $releaseId = (Get-ItemProperty -Path $regPath -Name ReleaseId -ErrorAction SilentlyContinue).ReleaseId
+    
+    # Determine correct Windows name based on build number
+    if ($buildInt -ge 22000) {
+        # Windows 11 builds start from 22000
+        $windowsName = "Windows 11"
+        # Extract edition from product name (remove "Windows 10" or "Windows 11" prefix)
+        $edition = $productName -replace "Windows 10 ", "" -replace "Windows 11 ", ""
+        $finalName = "Windows 11 $edition"
+    } elseif ($buildInt -ge 10240) {
+        # Windows 10 builds
+        $windowsName = "Windows 10"
+        $edition = $productName -replace "Windows 10 ", ""
+        $finalName = "Windows 10 $edition"
+    } elseif ($buildInt -ge 9200) {
+        $windowsName = "Windows 8.1"
+        $finalName = $windowsName
+    } elseif ($buildInt -ge 7600) {
+        $windowsName = "Windows 7"
+        $finalName = $windowsName
+    } else {
+        $finalName = $productName
+    }
+    
+    # Get version friendly name (22H2, 23H2, etc.)
+    $versionFriendly = ""
+    if ($displayVersion) {
+        $versionFriendly = $displayVersion
+    } elseif ($releaseId) {
+        $versionFriendly = $releaseId
+    }
+    
+    return @{
+        FullName = $finalName
+        Build = $buildInt
+        VersionFriendly = $versionFriendly
+    }
+}
+
+function Get-LocalIP {
+    try {
+        $ip = (Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue | 
+               Where-Object { $_.InterfaceAlias -notlike "*Loopback*" -and $_.PrefixOrigin -ne "WellKnown" } | 
+               Select-Object -First 1).IPAddress
+        if (-not $ip) {
+            $ip = (Test-Connection -ComputerName $env:COMPUTERNAME -Count 1 -ErrorAction SilentlyContinue).IPV4Address.IPAddressToString
+        }
+        if (-not $ip) { $ip = "Unable to retrieve" }
+        return $ip
+    } catch {
+        return "Unable to retrieve"
+    }
+}
+
+function Get-PublicIP {
+    try {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        $publicIP = (Invoke-WebRequest -Uri "https://api.ipify.org" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop).Content
+        if ($publicIP -match '^\d+\.\d+\.\d+\.\d+$') {
+            return $publicIP
+        }
+    } catch {}
+    
+    try {
+        $publicIP = (Invoke-WebRequest -Uri "https://icanhazip.com" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop).Content.Trim()
+        if ($publicIP -match '^\d+\.\d+\.\d+\.\d+$') {
+            return $publicIP
+        }
+    } catch {}
+    
+    return "Not connected"
+}
+
+function Get-NetworkAdapter {
+    try {
+        $adapter = Get-NetAdapter -Physical -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq "Up" } | Select-Object -First 1
+        if ($adapter) {
+            $adapterName = $adapter.Name
+            if ($adapterName.Length -gt 35) { $adapterName = $adapterName.Substring(0, 32) + "..." }
+            return $adapterName
+        }
+        return "No active adapter"
+    } catch {
+        return "Unable to retrieve"
+    }
+}
+
 function Show-SystemInfo {
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                         SYSTEM INFORMATION DASHBOARD" -ForegroundColor White
@@ -40,19 +141,20 @@ function Show-SystemInfo {
     Write-Host "  👤  Current User         : " -NoNewline -ForegroundColor Yellow
     Write-Host "$userName" -ForegroundColor White
 
-    # Windows Version
-    $winVer = (Get-ItemProperty "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion").ProductName
-    $winBuild = (Get-ItemProperty "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion").CurrentBuild
-    $winBuildLab = (Get-ItemProperty "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion").DisplayVersion
+    # Windows Version (CORRECTED)
+    $winInfo = Get-CorrectWindowsVersion
     Write-Host "  🪟  Windows Version      : " -NoNewline -ForegroundColor Yellow
-    Write-Host "$winVer (Build $winBuild)" -ForegroundColor White
-    if ($winBuildLab) {
+    Write-Host "$($winInfo.FullName) (Build $($winInfo.Build))" -ForegroundColor White
+    if ($winInfo.VersionFriendly) {
         Write-Host "                         : " -NoNewline -ForegroundColor Yellow
-        Write-Host "Version $winBuildLab" -ForegroundColor Gray
+        Write-Host "Version $($winInfo.VersionFriendly)" -ForegroundColor Gray
     }
 
     # Windows Edition
-    $winEdition = (Get-ItemProperty "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion").EditionID
+    $winEdition = (Get-ItemProperty "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name EditionID -ErrorAction SilentlyContinue).EditionID
+    if (-not $winEdition) {
+        $winEdition = (Get-ItemProperty "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name CompositionEditionID -ErrorAction SilentlyContinue).CompositionEditionID
+    }
     Write-Host "  📀  Windows Edition      : " -NoNewline -ForegroundColor Yellow
     Write-Host "$winEdition" -ForegroundColor White
 
@@ -62,86 +164,127 @@ function Show-SystemInfo {
     Write-Host "$arch" -ForegroundColor White
 
     # Processor
-    $cpu = (Get-CimInstance -ClassName Win32_Processor).Name
-    if ($cpu.Length -gt 50) { $cpu = $cpu.Substring(0, 47) + "..." }
-    Write-Host "  ⚡  Processor           : " -NoNewline -ForegroundColor Yellow
-    Write-Host "$cpu" -ForegroundColor White
+    $cpu = (Get-CimInstance -ClassName Win32_Processor -ErrorAction SilentlyContinue).Name
+    if ($cpu) {
+        if ($cpu.Length -gt 50) { $cpu = $cpu.Substring(0, 47) + "..." }
+        Write-Host "  ⚡  Processor           : " -NoNewline -ForegroundColor Yellow
+        Write-Host "$cpu" -ForegroundColor White
+    } else {
+        Write-Host "  ⚡  Processor           : " -NoNewline -ForegroundColor Yellow
+        Write-Host "Unable to retrieve" -ForegroundColor Gray
+    }
 
     # RAM
-    $ram = (Get-CimInstance -ClassName Win32_ComputerSystem).TotalPhysicalMemory
-    $ramGB = [math]::Round($ram / 1GB, 2)
-    Write-Host "  💾  RAM                 : " -NoNewline -ForegroundColor Yellow
-    Write-Host "$ramGB GB" -ForegroundColor White
+    $ram = (Get-CimInstance -ClassName Win32_ComputerSystem -ErrorAction SilentlyContinue).TotalPhysicalMemory
+    if ($ram) {
+        $ramGB = [math]::Round($ram / 1GB, 2)
+        Write-Host "  💾  RAM                 : " -NoNewline -ForegroundColor Yellow
+        Write-Host "$ramGB GB" -ForegroundColor White
+    } else {
+        Write-Host "  💾  RAM                 : " -NoNewline -ForegroundColor Yellow
+        Write-Host "Unable to retrieve" -ForegroundColor Gray
+    }
 
     # Disk Space
-    $drive = Get-PSDrive -Name C
-    $freeSpace = [math]::Round($drive.Free / 1GB, 2)
-    $totalSpace = [math]::Round($drive.Used / 1GB + $freeSpace, 2)
-    $freePercent = [math]::Round(($drive.Free / ($drive.Used + $drive.Free)) * 100, 2)
-    Write-Host "  💿  Disk (C:)           : " -NoNewline -ForegroundColor Yellow
-    Write-Host "$freeSpace GB free / $totalSpace GB total ($freePercent% free)" -ForegroundColor White
+    try {
+        $drive = Get-PSDrive -Name C -ErrorAction Stop
+        $freeSpace = [math]::Round($drive.Free / 1GB, 2)
+        $totalSpace = [math]::Round(($drive.Used + $drive.Free) / 1GB, 2)
+        $freePercent = [math]::Round(($drive.Free / ($drive.Used + $drive.Free)) * 100, 2)
+        Write-Host "  💿  Disk (C:)           : " -NoNewline -ForegroundColor Yellow
+        Write-Host "$freeSpace GB free / $totalSpace GB total ($freePercent% free)" -ForegroundColor White
+    } catch {
+        Write-Host "  💿  Disk (C:)           : " -NoNewline -ForegroundColor Yellow
+        Write-Host "Unable to retrieve" -ForegroundColor Gray
+    }
 
     # Windows Activation Status
-    $activation = (Get-CimInstance -ClassName SoftwareLicensingProduct | Where-Object { $_.PartialProductKey -and $_.ApplicationID -eq "55c92734-d682-4d71-983e-d6ec3f16059f" }).LicenseStatus
-    if ($activation -eq 1) {
+    try {
+        $activation = (Get-CimInstance -ClassName SoftwareLicensingProduct -ErrorAction SilentlyContinue | 
+                       Where-Object { $_.PartialProductKey -and $_.ApplicationID -eq "55c92734-d682-4d71-983e-d6ec3f16059f" }).LicenseStatus
+        if ($activation -eq 1) {
+            Write-Host "  🔑  Activation Status   : " -NoNewline -ForegroundColor Yellow
+            Write-Host "ACTIVATED" -ForegroundColor Green
+        } else {
+            Write-Host "  🔑  Activation Status   : " -NoNewline -ForegroundColor Yellow
+            Write-Host "NOT ACTIVATED" -ForegroundColor Red
+        }
+    } catch {
         Write-Host "  🔑  Activation Status   : " -NoNewline -ForegroundColor Yellow
-        Write-Host "ACTIVATED" -ForegroundColor Green
-    } else {
-        Write-Host "  🔑  Activation Status   : " -NoNewline -ForegroundColor Yellow
-        Write-Host "NOT ACTIVATED" -ForegroundColor Red
+        Write-Host "Unable to determine" -ForegroundColor Gray
     }
 
     Write-Host ""
     Write-Host "────────────────────────────────────────────────────────────────────────────────" -ForegroundColor DarkGray
 
-    # Internet Connection Status
-    Write-Host "  🌐  Internet Connection : " -NoNewline -ForegroundColor Yellow
+    # Internet Connection
+    $internetConnected = $false
     try {
-        $test = Test-Connection -ComputerName "8.8.8.8" -Count 1 -Quiet -ErrorAction Stop
+        $test = Test-Connection -ComputerName "8.8.8.8" -Count 1 -Quiet -ErrorAction Stop -TimeoutSeconds 2
+        $internetConnected = $test
+        Write-Host "  🌐  Internet Connection : " -NoNewline -ForegroundColor Yellow
         if ($test) {
             Write-Host "CONNECTED" -ForegroundColor Green
         } else {
             Write-Host "DISCONNECTED" -ForegroundColor Red
         }
     } catch {
+        Write-Host "  🌐  Internet Connection : " -NoNewline -ForegroundColor Yellow
         Write-Host "DISCONNECTED" -ForegroundColor Red
     }
 
+    # Local IP Address
+    $localIP = Get-LocalIP
+    Write-Host "  🏠  Local IP Address    : " -NoNewline -ForegroundColor Yellow
+    Write-Host "$localIP" -ForegroundColor White
+
     # Public IP Address (if connected)
-    if ($test) {
-        try {
-            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-            $publicIP = (Invoke-WebRequest -Uri "https://api.ipify.org" -UseBasicParsing -TimeoutSec 5).Content
-            Write-Host "  🌍  Public IP Address   : " -NoNewline -ForegroundColor Yellow
+    if ($internetConnected) {
+        $publicIP = Get-PublicIP
+        Write-Host "  🌍  Public IP Address   : " -NoNewline -ForegroundColor Yellow
+        if ($publicIP -eq "Not connected") {
+            Write-Host "$publicIP" -ForegroundColor Gray
+        } else {
             Write-Host "$publicIP" -ForegroundColor White
-        } catch {
-            Write-Host "  🌍  Public IP Address   : " -NoNewline -ForegroundColor Yellow
-            Write-Host "Unable to retrieve" -ForegroundColor Gray
         }
+    } else {
+        Write-Host "  🌍  Public IP Address   : " -NoNewline -ForegroundColor Yellow
+        Write-Host "Not connected" -ForegroundColor Gray
     }
 
-    # Network Adapter Info
-    $adapter = Get-NetAdapter -Physical | Where-Object { $_.Status -eq "Up" } | Select-Object -First 1
-    if ($adapter) {
-        $adapterName = $adapter.Name
-        if ($adapterName.Length -gt 40) { $adapterName = $adapterName.Substring(0, 37) + "..." }
-        Write-Host "  🔌  Network Adapter     : " -NoNewline -ForegroundColor Yellow
-        Write-Host "$adapterName" -ForegroundColor White
-    }
+    # Network Adapter
+    $adapterName = Get-NetworkAdapter
+    Write-Host "  🔌  Network Adapter     : " -NoNewline -ForegroundColor Yellow
+    Write-Host "$adapterName" -ForegroundColor White
+
+    # Gateway IP
+    try {
+        $gateway = (Get-NetRoute -DestinationPrefix "0.0.0.0/0" -ErrorAction SilentlyContinue | 
+                    Select-Object -First 1).NextHop
+        if ($gateway) {
+            Write-Host "  🚪  Default Gateway     : " -NoNewline -ForegroundColor Yellow
+            Write-Host "$gateway" -ForegroundColor White
+        }
+    } catch {}
 
     Write-Host ""
     Write-Host "────────────────────────────────────────────────────────────────────────────────" -ForegroundColor DarkGray
 
     # Last Boot Time
-    $lastBoot = (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime
-    $uptime = (Get-Date) - $lastBoot
-    $days = $uptime.Days
-    $hours = $uptime.Hours
-    $minutes = $uptime.Minutes
-    Write-Host "  ⏰  Last Boot          : " -NoNewline -ForegroundColor Yellow
-    Write-Host "$lastBoot" -ForegroundColor White
-    Write-Host "  🕐  System Uptime      : " -NoNewline -ForegroundColor Yellow
-    Write-Host "$days days, $hours hours, $minutes minutes" -ForegroundColor White
+    $lastBoot = (Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue).LastBootUpTime
+    if ($lastBoot) {
+        $uptime = (Get-Date) - $lastBoot
+        $days = $uptime.Days
+        $hours = $uptime.Hours
+        $minutes = $uptime.Minutes
+        Write-Host "  ⏰  Last Boot          : " -NoNewline -ForegroundColor Yellow
+        Write-Host "$lastBoot" -ForegroundColor White
+        Write-Host "  🕐  System Uptime      : " -NoNewline -ForegroundColor Yellow
+        Write-Host "$days days, $hours hours, $minutes minutes" -ForegroundColor White
+    } else {
+        Write-Host "  ⏰  Last Boot          : " -NoNewline -ForegroundColor Yellow
+        Write-Host "Unable to retrieve" -ForegroundColor Gray
+    }
 
     Write-Host ""
     Write-Host "────────────────────────────────────────────────────────────────────────────────" -ForegroundColor DarkGray
@@ -611,7 +754,7 @@ function Show-MainMenu {
     Show-Signature
     Show-SystemInfo
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "              All-in-One Windows Manager v5.0 - by KARIM ABU RIDA" -ForegroundColor White
+    Write-Host "              All-in-One Windows Manager v5.3 - by KARIM ABU RIDA" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "   ── WINGET MANAGER ─────────────────────────────────────────────" -ForegroundColor DarkGray
