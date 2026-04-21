@@ -1,14 +1,9 @@
 #===============================================================================
-# Custom Applications Installer - Add your own apps
+# One-Click App Installer - Latest Versions via Winget
 # Created by: KARIM ABU RIDA
-# Version: 1.0
-# Description: Add any application manually and install it via winget
 #===============================================================================
 
 Clear-Host
-
-# Store selected applications
-$global:SelectedApps = @()
 
 function Show-Signature {
     Write-Host "                                                                  " -ForegroundColor DarkGray
@@ -24,156 +19,91 @@ function Show-Signature {
     Write-Host "                                                                  " -ForegroundColor DarkGray
 }
 
+# List of applications (add more as needed)
+$AppsToInstall = @(
+    @{Name = "Mozilla Firefox"; WingetId = "Mozilla.Firefox"; Description = "Web Browser"},
+    @{Name = "Google Chrome"; WingetId = "Google.Chrome"; Description = "Web Browser"},
+    @{Name = "Brave Browser"; WingetId = "Brave.Brave"; Description = "Web Browser"},
+    @{Name = "Visual Studio Code"; WingetId = "Microsoft.VisualStudioCode"; Description = "Code Editor"},
+    @{Name = "7-Zip"; WingetId = "7zip.7zip"; Description = "File Archiver"},
+    @{Name = "VLC Media Player"; WingetId = "VideoLAN.VLC"; Description = "Media Player"},
+    @{Name = "Discord"; WingetId = "Discord.Discord"; Description = "Chat & Voice"},
+    @{Name = "Spotify"; WingetId = "Spotify.Spotify"; Description = "Music Streaming"},
+    @{Name = "Notepad++"; WingetId = "Notepad++.Notepad++"; Description = "Text Editor"},
+    @{Name = "Git"; WingetId = "Git.Git"; Description = "Version Control"},
+    @{Name = "Node.js"; WingetId = "OpenJS.NodeJS"; Description = "JavaScript Runtime"},
+    @{Name = "Python"; WingetId = "Python.Python"; Description = "Programming Language"},
+    @{Name = "Telegram"; WingetId = "Telegram.TelegramDesktop"; Description = "Messaging"},
+    @{Name = "Zoom"; WingetId = "Zoom.Zoom"; Description = "Video Conferencing"},
+    @{Name = "Slack"; WingetId = "Slack.Slack"; Description = "Team Communication"},
+    @{Name = "Steam"; WingetId = "Valve.Steam"; Description = "Gaming Platform"},
+    @{Name = "Epic Games Launcher"; WingetId = "EpicGames.EpicGamesLauncher"; Description = "Game Store"},
+    @{Name = "OBS Studio"; WingetId = "OBSProject.OBSStudio"; Description = "Streaming/Recording"},
+    @{Name = "GIMP"; WingetId = "GIMP.GIMP"; Description = "Image Editor"},
+    @{Name = "Blender"; WingetId = "BlenderFoundation.Blender"; Description = "3D Creation"}
+)
+
 function Show-MainMenu {
     Clear-Host
     Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "              Custom Applications Installer" -ForegroundColor White
+    Write-Host "                    One-Click App Installer (via Winget)" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "   [1] Add application to install list" -ForegroundColor Green
-    Write-Host "   [2] Remove application from list" -ForegroundColor Red
-    Write-Host "   [3] Show current list" -ForegroundColor Cyan
-    Write-Host "   [4] Install all applications in list" -ForegroundColor Magenta
-    Write-Host "   [5] Clear entire list" -ForegroundColor DarkRed
-    Write-Host "   [6] Exit" -ForegroundColor Gray
+    Write-Host "   [1] Install Firefox (Web Browser)" -ForegroundColor Green
+    Write-Host "   [2] Install all essential applications" -ForegroundColor Cyan
+    Write-Host "   [3] Choose applications to install (selection menu)" -ForegroundColor Magenta
+    Write-Host "   [4] Add custom application (by winget ID)" -ForegroundColor Yellow
+    Write-Host "   [5] Exit" -ForegroundColor Red
     Write-Host ""
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "           Currently selected: $($global:SelectedApps.Count) applications" -ForegroundColor Yellow
+    Write-Host "                         Developed by: KARIM ABU RIDA" -ForegroundColor Yellow
     Write-Host "================================================================================" -ForegroundColor Cyan
 }
 
-function Add-Application {
+function Install-Firefox {
     Clear-Host
     Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "                    Add Application to Install List" -ForegroundColor White
+    Write-Host "                    Installing Mozilla Firefox" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "Examples of winget IDs:" -ForegroundColor Yellow
-    Write-Host "  - Google Chrome  : Google.Chrome" -ForegroundColor Gray
-    Write-Host "  - Mozilla Firefox: Mozilla.Firefox" -ForegroundColor Gray
-    Write-Host "  - Visual Studio  : Microsoft.VisualStudioCode" -ForegroundColor Gray
-    Write-Host "  - 7-Zip          : 7zip.7zip" -ForegroundColor Gray
-    Write-Host "  - Spotify        : Spotify.Spotify" -ForegroundColor Gray
-    Write-Host "  - Discord        : Discord.Discord" -ForegroundColor Gray
-    Write-Host "  - Telegram       : Telegram.TelegramDesktop" -ForegroundColor Gray
-    Write-Host "  - Zoom           : Zoom.Zoom" -ForegroundColor Gray
-    Write-Host "  - Slack          : Slack.Slack" -ForegroundColor Gray
-    Write-Host "  - Git            : Git.Git" -ForegroundColor Gray
-    Write-Host "  - Node.js        : OpenJS.NodeJS" -ForegroundColor Gray
-    Write-Host "  - Python         : Python.Python" -ForegroundColor Gray
-    Write-Host "  - Notepad++      : Notepad++.Notepad++" -ForegroundColor Gray
-    Write-Host "  - VLC            : VideoLAN.VLC" -ForegroundColor Gray
-    Write-Host "  - GIMP           : GIMP.GIMP" -ForegroundColor Gray
-    Write-Host "  - Steam          : Valve.Steam" -ForegroundColor Gray
-    Write-Host ""
-    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host "Downloading and installing the latest version of Firefox..." -ForegroundColor Yellow
     Write-Host ""
     
-    $appName = Read-Host "Enter application name (for display)"
-    $wingetId = Read-Host "Enter winget ID"
+    winget install Mozilla.Firefox --accept-package-agreements --accept-source-agreements
     
-    if ($appName -and $wingetId) {
-        $global:SelectedApps += [PSCustomObject]@{
-            Name = $appName
-            WingetId = $wingetId
-        }
+    if ($LASTEXITCODE -eq 0) {
         Write-Host ""
-        Write-Host "✓ Added: $appName ($wingetId)" -ForegroundColor Green
+        Write-Host "✓ Firefox installed successfully!" -ForegroundColor Green
     } else {
         Write-Host ""
-        Write-Host "✗ Failed to add application" -ForegroundColor Red
+        Write-Host "✗ Installation failed. Please check your internet connection." -ForegroundColor Red
     }
     
     Write-Host ""
     Read-Host "Press Enter to continue"
 }
 
-function Remove-Application {
-    if ($global:SelectedApps.Count -eq 0) {
-        Write-Host ""
-        Write-Host "List is empty! Nothing to remove." -ForegroundColor Yellow
-        Read-Host "Press Enter to continue"
-        return
-    }
-    
+function Install-Essentials {
     Clear-Host
     Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "                    Remove Application from List" -ForegroundColor White
+    Write-Host "                    Installing Essential Applications" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
     
-    for ($i = 0; $i -lt $global:SelectedApps.Count; $i++) {
-        Write-Host "   [$($i+1)] $($global:SelectedApps[$i].Name) ($($global:SelectedApps[$i].WingetId))" -ForegroundColor White
-    }
+    $essentials = @("Mozilla.Firefox", "Google.Chrome", "7zip.7zip", "VideoLAN.VLC", "Notepad++.Notepad++")
     
-    Write-Host ""
-    Write-Host "   [0] Cancel" -ForegroundColor Gray
-    Write-Host ""
-    
-    $choice = Read-Host "Enter number to remove"
-    if ($choice -match "^\d+$" -and [int]$choice -gt 0 -and [int]$choice -le $global:SelectedApps.Count) {
-        $removed = $global:SelectedApps[[int]$choice - 1]
-        $global:SelectedApps = $global:SelectedApps | Where-Object { $_ -ne $removed }
-        Write-Host ""
-        Write-Host "✓ Removed: $($removed.Name)" -ForegroundColor Green
-    }
-    
-    Write-Host ""
-    Read-Host "Press Enter to continue"
-}
-
-function Show-CurrentList {
-    Clear-Host
-    Show-Signature
-    Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "                    Current Applications List" -ForegroundColor White
-    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host "The following applications will be installed:" -ForegroundColor Yellow
+    Write-Host "  - Mozilla Firefox" -ForegroundColor White
+    Write-Host "  - Google Chrome" -ForegroundColor White
+    Write-Host "  - 7-Zip" -ForegroundColor White
+    Write-Host "  - VLC Media Player" -ForegroundColor White
+    Write-Host "  - Notepad++" -ForegroundColor White
     Write-Host ""
     
-    if ($global:SelectedApps.Count -eq 0) {
-        Write-Host "   List is empty. Use option [1] to add applications." -ForegroundColor Yellow
-    } else {
-        Write-Host " Total: $($global:SelectedApps.Count) applications" -ForegroundColor Green
-        Write-Host ""
-        Write-Host " #   Application Name                    Winget ID" -ForegroundColor Cyan
-        Write-Host "---  ---------------------------------  ---------------------------------" -ForegroundColor DarkGray
-        
-        for ($i = 0; $i -lt $global:SelectedApps.Count; $i++) {
-            Write-Host " $($i+1)   $($global:SelectedApps[$i].Name.PadRight(35))" -NoNewline -ForegroundColor White
-            Write-Host " $($global:SelectedApps[$i].WingetId)" -ForegroundColor Yellow
-        }
-    }
-    
-    Write-Host ""
-    Read-Host "Press Enter to continue"
-}
-
-function Install-AllApplications {
-    if ($global:SelectedApps.Count -eq 0) {
-        Write-Host ""
-        Write-Host "List is empty! Add applications first." -ForegroundColor Yellow
-        Read-Host "Press Enter to continue"
-        return
-    }
-    
-    Clear-Host
-    Show-Signature
-    Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "                    Installing Applications" -ForegroundColor White
-    Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host ""
-    
-    Write-Host "Applications to install:" -ForegroundColor Yellow
-    foreach ($app in $global:SelectedApps) {
-        Write-Host "  - $($app.Name)" -ForegroundColor White
-    }
-    
-    Write-Host ""
     $confirm = Read-Host "Proceed with installation? (y/n)"
-    
     if ($confirm -ne "y" -and $confirm -ne "Y") {
         Write-Host "Installation cancelled." -ForegroundColor Red
         Read-Host "Press Enter to continue"
@@ -184,81 +114,163 @@ function Install-AllApplications {
     Write-Host "Starting installation..." -ForegroundColor Green
     Write-Host ""
     
-    $successCount = 0
-    $failCount = 0
-    
-    foreach ($app in $global:SelectedApps) {
-        Write-Host ">>> Installing $($app.Name)..." -ForegroundColor Cyan
-        winget install $app.WingetId --accept-package-agreements --accept-source-agreements --silent
+    foreach ($appId in $essentials) {
+        $app = $AppsToInstall | Where-Object { $_.WingetId -eq $appId }
+        $appName = if ($app) { $app.Name } else { $appId }
+        
+        Write-Host ">>> Installing $appName..." -ForegroundColor Cyan
+        winget install $appId --accept-package-agreements --accept-source-agreements --silent
         
         if ($LASTEXITCODE -eq 0) {
-            Write-Host "[OK] $($app.Name) installed successfully!" -ForegroundColor Green
-            $successCount++
+            Write-Host "[OK] $appName installed!" -ForegroundColor Green
         } else {
-            Write-Host "[FAIL] Failed to install $($app.Name)" -ForegroundColor Red
-            $failCount++
+            Write-Host "[FAIL] Failed to install $appName" -ForegroundColor Red
         }
         Write-Host ""
     }
     
-    Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "Installation completed!" -ForegroundColor Green
-    Write-Host "Successful: $successCount | Failed: $failCount" -ForegroundColor Yellow
-    Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host ""
     Read-Host "Press Enter to continue"
 }
 
-function Clear-List {
-    if ($global:SelectedApps.Count -eq 0) {
-        Write-Host "List is already empty." -ForegroundColor Yellow
+function Choose-Applications {
+    Clear-Host
+    Show-Signature
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host "                    Select Applications to Install" -ForegroundColor White
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host ""
+    
+    $selectedApps = @()
+    $i = 1
+    
+    foreach ($app in $AppsToInstall) {
+        Write-Host "   [$i] $($app.Name) - $($app.Description)" -ForegroundColor White
+        $i++
+    }
+    
+    Write-Host ""
+    Write-Host "   [0] Start installation" -ForegroundColor Green
+    Write-Host "   [A] Select all" -ForegroundColor Cyan
+    Write-Host "   [C] Cancel" -ForegroundColor Red
+    Write-Host ""
+    
+    $choice = Read-Host "Enter numbers (comma separated) or command"
+    
+    if ($choice -eq "C" -or $choice -eq "c") {
+        return
+    }
+    
+    if ($choice -eq "A" -or $choice -eq "a") {
+        $selectedApps = $AppsToInstall
+    } else {
+        $numbers = $choice -split ","
+        foreach ($num in $numbers) {
+            $idx = [int]$num.Trim() - 1
+            if ($idx -ge 0 -and $idx -lt $AppsToInstall.Count) {
+                $selectedApps += $AppsToInstall[$idx]
+            }
+        }
+    }
+    
+    if ($selectedApps.Count -eq 0) {
+        Write-Host "No applications selected!" -ForegroundColor Red
         Read-Host "Press Enter to continue"
         return
     }
     
     Write-Host ""
-    $confirm = Read-Host "Are you sure you want to clear all $($global:SelectedApps.Count) applications? (y/n)"
+    Write-Host "Selected applications: $($selectedApps.Count)" -ForegroundColor Green
+    foreach ($app in $selectedApps) {
+        Write-Host "  - $($app.Name)" -ForegroundColor White
+    }
     
-    if ($confirm -eq "y" -or $confirm -eq "Y") {
-        $global:SelectedApps = @()
-        Write-Host "List cleared successfully!" -ForegroundColor Green
+    Write-Host ""
+    $confirm = Read-Host "Proceed with installation? (y/n)"
+    if ($confirm -ne "y" -and $confirm -ne "Y") {
+        Write-Host "Installation cancelled." -ForegroundColor Red
+        Read-Host "Press Enter to continue"
+        return
+    }
+    
+    Write-Host ""
+    Write-Host "Starting installation..." -ForegroundColor Green
+    Write-Host ""
+    
+    foreach ($app in $selectedApps) {
+        Write-Host ">>> Installing $($app.Name)..." -ForegroundColor Cyan
+        winget install $app.WingetId --accept-package-agreements --accept-source-agreements --silent
+        
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "[OK] $($app.Name) installed successfully!" -ForegroundColor Green
+        } else {
+            Write-Host "[FAIL] Failed to install $($app.Name)" -ForegroundColor Red
+        }
+        Write-Host ""
+    }
+    
+    Write-Host "Installation completed!" -ForegroundColor Green
+    Read-Host "Press Enter to continue"
+}
+
+function Add-CustomApp {
+    Clear-Host
+    Show-Signature
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host "                    Install Custom Application" -ForegroundColor White
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host ""
+    
+    Write-Host "Examples of winget IDs:" -ForegroundColor Yellow
+    Write-Host "  - Google Chrome  : Google.Chrome" -ForegroundColor Gray
+    Write-Host "  - Mozilla Firefox: Mozilla.Firefox" -ForegroundColor Gray
+    Write-Host "  - Visual Studio  : Microsoft.VisualStudioCode" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "To find a winget ID, use: winget search 'application name'" -ForegroundColor Cyan
+    Write-Host ""
+    
+    $wingetId = Read-Host "Enter winget ID"
+    
+    if (-not $wingetId) {
+        Write-Host "No ID provided!" -ForegroundColor Red
+        Read-Host "Press Enter to continue"
+        return
+    }
+    
+    Write-Host ""
+    Write-Host "Installing $wingetId..." -ForegroundColor Yellow
+    Write-Host ""
+    
+    winget install $wingetId --accept-package-agreements --accept-source-agreements
+    
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host ""
+        Write-Host "✓ Application installed successfully!" -ForegroundColor Green
     } else {
-        Write-Host "Operation cancelled." -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "✗ Installation failed. Check the winget ID and try again." -ForegroundColor Red
     }
     
     Read-Host "Press Enter to continue"
 }
 
-# Main program loop
+# Main menu loop
 do {
     Show-MainMenu
-    $choice = Read-Host "Enter your choice (1-6)"
+    $choice = Read-Host "Enter your choice (1-5)"
     
     switch ($choice) {
-        "1" { Add-Application }
-        "2" { Remove-Application }
-        "3" { Show-CurrentList }
-        "4" { Install-AllApplications }
-        "5" { Clear-List }
-        "6" {
-            Clear-Host
-            Show-Signature
-            Write-Host ""
-            Write-Host "================================================================================" -ForegroundColor Cyan
-            Write-Host "                   Thank you for using Custom Installer!" -ForegroundColor White
-            Write-Host "================================================================================" -ForegroundColor Cyan
-            Write-Host ""
-            Write-Host "                         Developed by: KARIM ABU RIDA" -ForegroundColor Yellow
-            Write-Host "                         GitHub: MARKETTV1" -ForegroundColor Yellow
-            Write-Host ""
+        "1" { Install-Firefox }
+        "2" { Install-Essentials }
+        "3" { Choose-Applications }
+        "4" { Add-CustomApp }
+        "5" { 
             Write-Host "Exiting... Goodbye!" -ForegroundColor Green
-            Write-Host ""
-            Start-Sleep -Seconds 2
             break
         }
         default {
-            Write-Host "Invalid choice! Please enter 1-6" -ForegroundColor Red
+            Write-Host "Invalid choice! Please enter 1-5" -ForegroundColor Red
             Start-Sleep -Seconds 2
         }
     }
-} while ($choice -ne "6")
+} while ($choice -ne "5")
