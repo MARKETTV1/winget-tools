@@ -1,12 +1,14 @@
+Copier
+
 #===============================================================================
 # KARIM ABU RIDA - All-in-One Windows Manager
 # Version: 4.0
 # Tools: Winget Manager + App Scanner/Installer + IDM Activation
 # GitHub: MARKETTV1
 #===============================================================================
-
+ 
 Clear-Host
-
+ 
 function Show-Signature {
     Write-Host "                                                                  " -ForegroundColor DarkGray
     Write-Host "   ██╗  ██╗ █████╗ ██████╗ ██╗███╗   ███╗    █████╗ ██████╗ ██╗   ██╗    ██████╗ ██╗██████╗  █████╗ " -ForegroundColor Cyan
@@ -20,7 +22,7 @@ function Show-Signature {
     Write-Host "                              GitHub: MARKETTV1                    " -ForegroundColor Yellow
     Write-Host "                                                                  " -ForegroundColor DarkGray
 }
-
+ 
 #===============================================================================
 # APPS LIST
 #===============================================================================
@@ -104,7 +106,7 @@ $AppsList = @(
     @{Num=77; Name="Winshot";                Id="custom"; Type="custom";
                Url="https://github.com/mrgoonie/winshot/releases/download/v1.6.0/winshot.exe"; SilentArg="/S"}
 )
-
+ 
 #===============================================================================
 # SHARED HELPERS
 #===============================================================================
@@ -126,7 +128,7 @@ function Install-CustomApp {
         return $false
     }
 }
-
+ 
 function Get-InstalledVersion { param($Id)
     if ($Id -eq "custom") { return $null }
     try {
@@ -135,7 +137,7 @@ function Get-InstalledVersion { param($Id)
     } catch {}
     return $null
 }
-
+ 
 function Get-LatestVersion { param($App)
     if ($App.Type -eq "custom") { return "Custom App" }
     try {
@@ -144,9 +146,9 @@ function Get-LatestVersion { param($App)
     } catch {}
     return "Unknown"
 }
-
+ 
 #===============================================================================
-# MODULE 1 — WINGET MANAGER (show all installed + selective update)
+# MODULE 1 — WINGET MANAGER
 #===============================================================================
 function Show-AllSystemApps {
     Clear-Host; Show-Signature
@@ -154,7 +156,7 @@ function Show-AllSystemApps {
     Write-Host "                All Installed Applications - Version Viewer" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""; Write-Host "Loading... please wait" -ForegroundColor Yellow; Write-Host ""
-
+ 
     # Winget apps
     Write-Host "----------------------------------------" -ForegroundColor Magenta
     Write-Host "[A] WINGET APPLICATIONS" -ForegroundColor Green
@@ -178,7 +180,7 @@ function Show-AllSystemApps {
     }
     if ($wList.Count -gt 100) { Write-Host "... and $($wList.Count-100) more" -ForegroundColor Gray }
     Write-Host ""; Write-Host "Total: $($wList.Count)" -ForegroundColor Green; Write-Host ""
-
+ 
     # Store apps
     Write-Host "----------------------------------------" -ForegroundColor Magenta
     Write-Host "[B] MICROSOFT STORE APPS" -ForegroundColor Green
@@ -194,7 +196,7 @@ function Show-AllSystemApps {
     }
     if ($sList.Count -gt 50) { Write-Host "... and $($sList.Count-50) more" -ForegroundColor Gray }
     Write-Host ""; Write-Host "Total: $($sList.Count)" -ForegroundColor Green; Write-Host ""
-
+ 
     # Registry apps
     Write-Host "----------------------------------------" -ForegroundColor Magenta
     Write-Host "[C] TRADITIONAL APPLICATIONS" -ForegroundColor Green
@@ -215,7 +217,7 @@ function Show-AllSystemApps {
         Write-Host " [$($rList[$i].Version)]" -ForegroundColor Yellow
     }
     if ($rList.Count -gt 50) { Write-Host "... and $($rList.Count-50) more" -ForegroundColor Gray }
-
+ 
     Write-Host ""; Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "SUMMARY" -ForegroundColor White
     Write-Host "Winget: $($wList.Count)  |  Store: $($sList.Count)  |  Traditional: $($rList.Count)" -ForegroundColor Yellow
@@ -223,14 +225,14 @@ function Show-AllSystemApps {
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""; Read-Host "Press Enter to return to main menu"
 }
-
+ 
 function Update-Selective {
     Clear-Host; Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                   Selective Winget Update Manager" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""; Write-Host "Checking for updates..." -ForegroundColor Yellow; Write-Host ""
-
+ 
     $upgradeOutput = winget upgrade --accept-source-agreements 2>$null
     $uList = @(); $found = $false
     foreach ($line in ($upgradeOutput -split "`n")) {
@@ -242,23 +244,25 @@ function Update-Selective {
             }
         }
     }
-
+ 
     if ($uList.Count -eq 0) {
         Write-Host "No updates available!" -ForegroundColor Green
         Write-Host ""; Read-Host "Press Enter to return"; return
     }
-
+ 
     Write-Host "Available updates:" -ForegroundColor Green; Write-Host ""
     for ($i=0; $i -lt $uList.Count; $i++) {
         Write-Host "[$($i+1)] " -NoNewline -ForegroundColor Cyan
         Write-Host "$($uList[$i].Name) " -NoNewline -ForegroundColor White
         Write-Host "($($uList[$i].Current) -> $($uList[$i].Available))" -ForegroundColor Yellow
     }
-
-    Write-Host ""; Write-Host "Options: numbers 1,2,3  |  'all'  |  'menu'" -ForegroundColor Gray; Write-Host ""
+ 
+    Write-Host ""
+    Write-Host "Options: numbers 1,2,3  |  'all'  |  '0' to go back" -ForegroundColor Gray
+    Write-Host ""
     $userInput = Read-Host "Your choice"
-    if ($userInput -eq "menu") { return }
-
+    if ($userInput -eq "0") { return }
+ 
     $toUpdate = @()
     if ($userInput -eq "all") { $toUpdate = $uList }
     else {
@@ -267,15 +271,15 @@ function Update-Selective {
             if ($idx -ge 0 -and $idx -lt $uList.Count) { $toUpdate += $uList[$idx] }
         }
     }
-
+ 
     if ($toUpdate.Count -eq 0) { Write-Host "No valid selection!" -ForegroundColor Red; Read-Host "Press Enter"; return }
-
+ 
     Write-Host ""; Write-Host "Selected:" -ForegroundColor Green
     $toUpdate | ForEach-Object { Write-Host "  - $($_.Name)" -ForegroundColor White }
     Write-Host ""
     $confirm = Read-Host "Proceed? (y/n)"
     if ($confirm -ne "y" -and $confirm -ne "Y") { Write-Host "Cancelled!" -ForegroundColor Red; Read-Host "Press Enter"; return }
-
+ 
     Write-Host ""; Write-Host "Starting updates..." -ForegroundColor Yellow; Write-Host ""
     foreach ($app in $toUpdate) {
         Write-Host ">>> Updating $($app.Name)..." -ForegroundColor Cyan
@@ -284,12 +288,12 @@ function Update-Selective {
         else { Write-Host "[FAIL] $($app.Name)" -ForegroundColor Red }
         Write-Host ""
     }
-
+ 
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "Done!" -ForegroundColor Green
     Write-Host ""; Read-Host "Press Enter to return"
 }
-
+ 
 #===============================================================================
 # MODULE 2 — APP SCANNER + DIRECT INSTALLER
 #===============================================================================
@@ -298,36 +302,36 @@ function Show-AppsList {
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                    Available Applications (Three Columns)" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan; Write-Host ""
-
+ 
     $perCol = [math]::Ceiling($AppsList.Count / 3)
     $c1 = $AppsList[0..($perCol-1)]
     $c2 = $AppsList[$perCol..(($perCol*2)-1)]
     $c3 = $AppsList[($perCol*2)..($AppsList.Count-1)]
     $maxL = [math]::Max([math]::Max($c1.Count,$c2.Count),$c3.Count)
-
+ 
     Write-Host "  Column 1                          Column 2                          Column 3" -ForegroundColor Yellow
     Write-Host "  --------                          --------                          --------" -ForegroundColor DarkGray
-
+ 
     for ($i=0; $i -lt $maxL; $i++) {
         $t1 = if ($i -lt $c1.Count) { "  $($c1[$i].Num). $($c1[$i].Name)$(if($c1[$i].Type -eq 'custom'){' *'})".PadRight(35) } else { " "*35 }
         $t2 = if ($i -lt $c2.Count) { "  $($c2[$i].Num). $($c2[$i].Name)$(if($c2[$i].Type -eq 'custom'){' *'})".PadRight(35) } else { " "*35 }
         $t3 = if ($i -lt $c3.Count) { "  $($c3[$i].Num). $($c3[$i].Name)$(if($c3[$i].Type -eq 'custom'){' *'})" } else { "" }
         Write-Host "$t1$t2$t3" -ForegroundColor White
     }
-
+ 
     Write-Host ""; Write-Host "  * Custom app (direct download)" -ForegroundColor Yellow
     Write-Host "  Total: $($AppsList.Count) apps" -ForegroundColor Green
     Write-Host ""; Write-Host "  [0] Back to main menu" -ForegroundColor Gray
     Write-Host "================================================================================" -ForegroundColor Cyan
 }
-
+ 
 function Scan-InstalledApps {
     Clear-Host; Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                    Scanning Installed Applications" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""; Write-Host "Please wait..." -ForegroundColor Yellow; Write-Host ""
-
+ 
     $results = @(); $total = $AppsList.Count; $current = 0
     foreach ($app in $AppsList) {
         $current++
@@ -347,7 +351,7 @@ function Scan-InstalledApps {
         }
     }
     Write-Progress -Activity "Scanning..." -Completed
-
+ 
     Clear-Host; Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                    Installed Applications Report" -ForegroundColor White
@@ -356,7 +360,7 @@ function Scan-InstalledApps {
     Write-Host "================================================================================================" -ForegroundColor DarkGray
     Write-Host " No.  Name                                       Current                   Latest" -ForegroundColor Yellow
     Write-Host "================================================================================================" -ForegroundColor DarkGray
-
+ 
     foreach ($app in ($results | Sort-Object Name)) {
         Write-Host " $($app.Num). " -NoNewline -ForegroundColor Cyan
         Write-Host "$($app.Name.PadRight(42))" -NoNewline -ForegroundColor White
@@ -364,22 +368,22 @@ function Scan-InstalledApps {
         $color = if ($app.Current -eq $app.Latest) { "Green" } elseif ($app.Latest -in "Unknown","Custom App") { "Gray" } else { "Yellow" }
         Write-Host "$($app.Latest)" -ForegroundColor $color
     }
-
+ 
     Write-Host "================================================================================================" -ForegroundColor DarkGray
     Write-Host ""
     $upd = ($results | Where-Object { $_.Current -ne $_.Latest -and $_.Latest -notin "Unknown","Custom App" }).Count
     if ($upd -gt 0) { Write-Host "Updates available: $upd apps" -ForegroundColor Yellow }
     else { Write-Host "All apps are up to date!" -ForegroundColor Green }
-
-    Write-Host ""; Read-Host "Press Enter to return"
+ 
+    Write-Host ""; Read-Host "Press Enter to return to main menu"
     return $results
 }
-
+ 
 function Install-ByNumbers {
     param($Numbers)
     $selected = $AppsList | Where-Object { $Numbers -contains $_.Num }
     if (-not $selected) { Write-Host "No valid apps selected!" -ForegroundColor Red; return }
-
+ 
     Write-Host ""; Write-Host "Selected:" -ForegroundColor Green
     foreach ($app in $selected) {
         Write-Host "  - $($app.Name)$(if($app.Type -eq 'custom'){' (custom)'})" -ForegroundColor White
@@ -387,7 +391,7 @@ function Install-ByNumbers {
     Write-Host ""
     $confirm = Read-Host "Proceed with installation? (y/n)"
     if ($confirm -ne "y") { Write-Host "Cancelled." -ForegroundColor Red; return }
-
+ 
     Write-Host ""; Write-Host "Starting installation..." -ForegroundColor Yellow; Write-Host ""
     foreach ($app in $selected) {
         if ($app.Type -eq "custom") {
@@ -401,7 +405,7 @@ function Install-ByNumbers {
         Write-Host ""
     }
 }
-
+ 
 #===============================================================================
 # MODULE 3 — IDM ACTIVATION
 #===============================================================================
@@ -410,22 +414,38 @@ function Run-IDMActivation {
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                   IDM Activation Script (IAS)" -ForegroundColor Magenta
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host ""; Write-Host "Downloading IAS script..." -ForegroundColor Yellow
-
-    try {
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        $iasPath = "$env:TEMP\IAS.cmd"
-        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/MARKETTV1/idm/refs/heads/main/IAS.cmd" -OutFile $iasPath -ErrorAction Stop
-        Write-Host "Download complete! Launching..." -ForegroundColor Green; Write-Host ""
-        Start-Process cmd.exe -ArgumentList "/c `"$iasPath`"" -Verb RunAs -Wait
-        Write-Host ""; Write-Host "IDM Activation finished." -ForegroundColor Green
-    } catch {
-        Write-Host ""; Write-Host "[ERROR] $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "   [1] Download and run IDM Activation" -ForegroundColor Green
+    Write-Host "   [0] Back to main menu" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host ""
+ 
+    $subChoice = Read-Host "Enter your choice"
+ 
+    if ($subChoice -eq "0") { return }
+ 
+    if ($subChoice -eq "1") {
+        Write-Host ""; Write-Host "Downloading IAS script..." -ForegroundColor Yellow
+        try {
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            $iasPath = "$env:TEMP\IAS.cmd"
+            Invoke-WebRequest -Uri "https://raw.githubusercontent.com/MARKETTV1/idm/refs/heads/main/IAS.cmd" -OutFile $iasPath -ErrorAction Stop
+            Write-Host "Download complete! Launching..." -ForegroundColor Green
+            Write-Host ""
+            Start-Process cmd.exe -ArgumentList "/c `"$iasPath`"" -Verb RunAs -Wait
+            Write-Host ""; Write-Host "IDM Activation finished." -ForegroundColor Green
+        } catch {
+            Write-Host ""; Write-Host "[ERROR] $($_.Exception.Message)" -ForegroundColor Red
+        }
+    } else {
+        Write-Host "Invalid choice!" -ForegroundColor Red
     }
-
-    Write-Host ""; Read-Host "Press Enter to return"
+ 
+    Write-Host ""
+    Read-Host "Press Enter to return to main menu"
 }
-
+ 
 #===============================================================================
 # MAIN MENU
 #===============================================================================
@@ -453,26 +473,28 @@ function Show-MainMenu {
     Write-Host "                         Developed by: KARIM ABU RIDA" -ForegroundColor Yellow
     Write-Host "================================================================================" -ForegroundColor Cyan
 }
-
+ 
 #===============================================================================
 # MAIN LOOP
 #===============================================================================
 do {
     Show-MainMenu
     $choice = Read-Host "`nEnter your choice (1-7)"
-
+ 
     switch ($choice) {
         "1" { Show-AllSystemApps }
         "2" { Update-Selective }
         "3" {
             Show-AppsList
-            Read-Host "`nPress Enter to return"
+            Read-Host "`nPress Enter to return to main menu"
         }
         "4" { Scan-InstalledApps }
         "5" {
             Show-AppsList
-            Write-Host ""; Write-Host "Examples: 1,2,3  or  1 2 3" -ForegroundColor Gray
-            Write-Host "  [0] Back" -ForegroundColor Gray; Write-Host ""
+            Write-Host ""
+            Write-Host "  Examples: 1,2,3  or  1 2 3" -ForegroundColor Gray
+            Write-Host "  [0] Back to main menu" -ForegroundColor Gray
+            Write-Host ""
             $raw = Read-Host "Enter numbers"
             if ($raw -ne "0") {
                 $raw = $raw -replace " ",","
@@ -486,15 +508,22 @@ do {
         "6" { Run-IDMActivation }
         "7" {
             Clear-Host; Show-Signature
-            Write-Host ""; Write-Host "================================================================================" -ForegroundColor Cyan
+            Write-Host ""
+            Write-Host "================================================================================" -ForegroundColor Cyan
             Write-Host "                   Thank you for using All-in-One Manager!" -ForegroundColor White
             Write-Host "================================================================================" -ForegroundColor Cyan
-            Write-Host ""; Write-Host "                         Developed by: KARIM ABU RIDA" -ForegroundColor Yellow
+            Write-Host ""
+            Write-Host "                         Developed by: KARIM ABU RIDA" -ForegroundColor Yellow
             Write-Host "                         GitHub: MARKETTV1" -ForegroundColor Yellow
-            Write-Host ""; Write-Host "Goodbye!" -ForegroundColor Green; Write-Host ""
+            Write-Host ""
+            Write-Host "Goodbye!" -ForegroundColor Green
+            Write-Host ""
             Start-Sleep -Seconds 2
             break
         }
-        default { Write-Host "Invalid choice! Enter 1-7" -ForegroundColor Red; Start-Sleep -Seconds 1 }
+        default {
+            Write-Host "Invalid choice! Enter 1-7" -ForegroundColor Red
+            Start-Sleep -Seconds 1
+        }
     }
 } while ($choice -ne "7")
