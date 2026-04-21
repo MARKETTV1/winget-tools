@@ -10,12 +10,12 @@ Clear-Host
 # Display signature banner at startup
 function Show-Signature {
     Write-Host "                                                                  " -ForegroundColor DarkGray
-    Write-Host "   ██╗  ██╗ █████╗ ██████╗ ██╗███╗   ███╗    ██████╗ ██████╗ ██╗██████╗  █████╗ " -ForegroundColor Cyan
-    Write-Host "   ██║ ██╔╝██╔══██╗██╔══██╗██║████╗ ████║    ██╔══██╗██╔══██╗██║██╔══██╗██╔══██╗" -ForegroundColor Cyan
-    Write-Host "   █████╔╝ ███████║██████╔╝██║██╔████╔██║    ██████╔╝██║  ██║██║██║  ██║███████║" -ForegroundColor Cyan
-    Write-Host "   ██╔═██╗ ██╔══██║██╔══██╗██║██║╚██╔╝██║    ██╔══██╗██║  ██║██║██║  ██║██╔══██║" -ForegroundColor Cyan
-    Write-Host "   ██║  ██╗██║  ██║██║  ██║██║██║ ╚═╝ ██║    ██║  ██║██████╔╝██║██████╔╝██║  ██║" -ForegroundColor Cyan
-    Write-Host "   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝    ╚═╝  ╚═╝╚═════╝ ╚═╝╚═════╝ ╚═╝  ╚═╝" -ForegroundColor Cyan
+    Write-Host "   ██╗  ██╗ █████╗ ██████╗ ██╗███╗   ███╗    █████╗ ██████╗ ██╗   ██╗    ██████╗ ██╗██████╗  █████╗ " -ForegroundColor Cyan
+    Write-Host "   ██║ ██╔╝██╔══██╗██╔══██╗██║████╗ ████║    ██╔══██╗██╔══██╗██║   ██║    ██╔══██╗██║██╔══██╗██╔══██╗" -ForegroundColor Cyan
+    Write-Host "   █████╔╝ ███████║██████╔╝██║██╔████╔██║    ██████╔╝██║  ██║██║   ██║    ██████╔╝██║██║  ██║███████║" -ForegroundColor Cyan
+    Write-Host "   ██╔═██╗ ██╔══██║██╔══██╗██║██║╚██╔╝██║    ██╔══██╗██║  ██║██║   ██║    ██╔══██╗██║██║  ██║██╔══██║" -ForegroundColor Cyan
+    Write-Host "   ██║  ██╗██║  ██║██║  ██║██║██║ ╚═╝ ██║    ██║  ██║██████╔╝╚██████╔╝    ██║  ██║██║██████╔╝██║  ██║" -ForegroundColor Cyan
+    Write-Host "   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝    ╚═╝  ╚═╝╚═════╝  ╚═════╝     ╚═╝  ╚═╝╚═╝╚═════╝ ╚═╝  ╚═╝" -ForegroundColor Cyan
     Write-Host "                                                                  " -ForegroundColor DarkGray
     Write-Host "                              Created by: KARIM ABU RIDA           " -ForegroundColor Yellow
     Write-Host "                              GitHub: MARKETTV1                    " -ForegroundColor Yellow
@@ -340,7 +340,6 @@ do {
             Write-Host ""
             Write-Host "                         Developed by: KARIM ABU RIDA" -ForegroundColor Yellow
             Write-Host "                         GitHub: MARKETTV1" -ForegroundColor Yellow
-            Write-Host "                         Twitter: @KARIM_ABU_RIDA" -ForegroundColor Yellow
             Write-Host ""
             Write-Host "Exiting... Goodbye!" -ForegroundColor Green
             Write-Host ""
