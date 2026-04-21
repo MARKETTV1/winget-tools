@@ -12,7 +12,7 @@ if (!(Test-Path $installPath)) {
 }
 
 # Download the script
-$scriptUrl = "https://raw.githubusercontent.com/اسم-المستخدم/winget-tools/main/winget-manager.ps1"
+$scriptUrl = "https://raw.githubusercontent.com/MARKETTV1/winget-tools/refs/heads/main/winget-manager.ps1"
 $scriptPath = "$installPath\winget-manager.ps1"
 
 Write-Host "Downloading Winget Manager..." -ForegroundColor Yellow
