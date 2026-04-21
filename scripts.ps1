@@ -64,6 +64,8 @@ function Show-AllApps {
     }
     
     Write-Host ""
+    Write-Host "  [0] Back to main menu" -ForegroundColor Gray
+    Write-Host ""
     Write-Host "================================================================================" -ForegroundColor Cyan
 }
 
@@ -165,6 +167,9 @@ function Scan-InstalledApps {
     }
     
     Write-Host ""
+    Write-Host "  [0] Back to main menu" -ForegroundColor Gray
+    Write-Host ""
+    
     return $results
 }
 
@@ -235,17 +240,23 @@ do {
     switch ($choice) {
         "1" {
             Show-AllApps
-            Read-Host "Press Enter to continue"
+            $back = Read-Host "`nEnter 0 to go back"
+            if ($back -eq "0") { continue }
         }
         "2" {
             Scan-InstalledApps
-            Read-Host "`nPress Enter to continue"
+            $back = Read-Host "Enter 0 to go back"
+            if ($back -eq "0") { continue }
         }
         "3" {
             Show-AllApps
             Write-Host ""
             Write-Host "Examples: 1,2,3  or  1 2 3  or  1,2,3,9,15" -ForegroundColor Gray
+            Write-Host "  [0] Back to main menu" -ForegroundColor Gray
+            Write-Host ""
             $input = Read-Host "Enter numbers (spaces or commas)"
+            
+            if ($input -eq "0") { continue }
             
             $input = $input -replace " ", ","
             $numbers = @()
