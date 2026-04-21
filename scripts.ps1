@@ -1,11 +1,14 @@
 #===============================================================================
-# Ninite Applications Installer - Latest Versions
+# Custom Applications Installer - Add your own apps
 # Created by: KARIM ABU RIDA
 # Version: 1.0
-# Description: Download and install latest versions of popular apps via Ninite
+# Description: Add any application manually and install it via winget
 #===============================================================================
 
 Clear-Host
+
+# Store selected applications
+$global:SelectedApps = @()
 
 function Show-Signature {
     Write-Host "                                                                  " -ForegroundColor DarkGray
@@ -21,303 +24,228 @@ function Show-Signature {
     Write-Host "                                                                  " -ForegroundColor DarkGray
 }
 
-# Ninite application list with their codes
-$NiniteApps = @(
-    @{Name = "7-Zip"; Code = "7zip"; Category = "Utilities"},
-    @{Name = "Google Chrome"; Code = "chrome"; Category = "Browsers"},
-    @{Name = "Mozilla Firefox"; Code = "firefox"; Category = "Browsers"},
-    @{Name = "Brave"; Code = "brave"; Category = "Browsers"},
-    @{Name = "Discord"; Code = "discord"; Category = "Messaging"},
-    @{Name = "Slack"; Code = "slack"; Category = "Messaging"},
-    @{Name = "Telegram"; Code = "telegram"; Category = "Messaging"},
-    @{Name = "Zoom"; Code = "zoom"; Category = "Video"},
-    @{Name = "Spotify"; Code = "spotify"; Category = "Media"},
-    @{Name = "VLC"; Code = "vlc"; Category = "Media"},
-    @{Name = "GIMP"; Code = "gimp"; Category = "Graphics"},
-    @{Name = "Paint.NET"; Code = "paintnet"; Category = "Graphics"},
-    @{Name = "Visual Studio Code"; Code = "vscode"; Category = "Development"},
-    @{Name = "Git"; Code = "git"; Category = "Development"},
-    @{Name = "Node.js"; Code = "nodejs"; Category = "Development"},
-    @{Name = "Python"; Code = "python"; Category = "Development"},
-    @{Name = "Notepad++"; Code = "notepadplusplus"; Category = "Text"},
-    @{Name = "LibreOffice"; Code = "libreoffice"; Category = "Office"},
-    @{Name = "Adobe Reader"; Code = "adobereader"; Category = "Documents"},
-    @{Name = "Foxit Reader"; Code = "foxitreader"; Category = "Documents"},
-    @{Name = "Steam"; Code = "steam"; Category = "Games"},
-    @{Name = "Epic Games Launcher"; Code = "epic"; Category = "Games"},
-    @{Name = "Java Runtime"; Code = "java"; Category = "Runtimes"},
-    @{Name = ".NET Runtime"; Code = "dotnet"; Category = "Runtimes"},
-    @{Name = "Dropbox"; Code = "dropbox"; Category = "Cloud"},
-    @{Name = "Google Drive"; Code = "googledrive"; Category = "Cloud"},
-    @{Name = "TeamViewer"; Code = "teamviewer"; Category = "Remote"},
-    @{Name = "qBittorrent"; Code = "qbittorrent"; Category = "Download"},
-    @{Name = "FileZilla"; Code = "filezilla"; Category = "FTP"},
-    @{Name = "KeePass"; Code = "keepass"; Category = "Security"}
-)
-
 function Show-MainMenu {
     Clear-Host
     Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "                    Ninite - Latest Applications Installer" -ForegroundColor White
+    Write-Host "              Custom Applications Installer" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "   [1] Browse and select applications by category" -ForegroundColor Green
-    Write-Host "   [2] Show all available applications" -ForegroundColor Green
-    Write-Host "   [3] Download and install selected applications" -ForegroundColor Green
-    Write-Host "   [4] Install pre-configured essentials pack" -ForegroundColor Green
-    Write-Host "   [5] Exit" -ForegroundColor Red
+    Write-Host "   [1] Add application to install list" -ForegroundColor Green
+    Write-Host "   [2] Remove application from list" -ForegroundColor Red
+    Write-Host "   [3] Show current list" -ForegroundColor Cyan
+    Write-Host "   [4] Install all applications in list" -ForegroundColor Magenta
+    Write-Host "   [5] Clear entire list" -ForegroundColor DarkRed
+    Write-Host "   [6] Exit" -ForegroundColor Gray
     Write-Host ""
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "                         Developed by: KARIM ABU RIDA" -ForegroundColor Yellow
+    Write-Host "           Currently selected: $($global:SelectedApps.Count) applications" -ForegroundColor Yellow
     Write-Host "================================================================================" -ForegroundColor Cyan
 }
 
-function Show-Categories {
+function Add-Application {
     Clear-Host
     Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "                    Select Applications by Category" -ForegroundColor White
+    Write-Host "                    Add Application to Install List" -ForegroundColor White
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "Examples of winget IDs:" -ForegroundColor Yellow
+    Write-Host "  - Google Chrome  : Google.Chrome" -ForegroundColor Gray
+    Write-Host "  - Mozilla Firefox: Mozilla.Firefox" -ForegroundColor Gray
+    Write-Host "  - Visual Studio  : Microsoft.VisualStudioCode" -ForegroundColor Gray
+    Write-Host "  - 7-Zip          : 7zip.7zip" -ForegroundColor Gray
+    Write-Host "  - Spotify        : Spotify.Spotify" -ForegroundColor Gray
+    Write-Host "  - Discord        : Discord.Discord" -ForegroundColor Gray
+    Write-Host "  - Telegram       : Telegram.TelegramDesktop" -ForegroundColor Gray
+    Write-Host "  - Zoom           : Zoom.Zoom" -ForegroundColor Gray
+    Write-Host "  - Slack          : Slack.Slack" -ForegroundColor Gray
+    Write-Host "  - Git            : Git.Git" -ForegroundColor Gray
+    Write-Host "  - Node.js        : OpenJS.NodeJS" -ForegroundColor Gray
+    Write-Host "  - Python         : Python.Python" -ForegroundColor Gray
+    Write-Host "  - Notepad++      : Notepad++.Notepad++" -ForegroundColor Gray
+    Write-Host "  - VLC            : VideoLAN.VLC" -ForegroundColor Gray
+    Write-Host "  - GIMP           : GIMP.GIMP" -ForegroundColor Gray
+    Write-Host "  - Steam          : Valve.Steam" -ForegroundColor Gray
+    Write-Host ""
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
     
-    $categories = $NiniteApps | Group-Object Category | Sort-Object Name
-    $i = 1
-    $categoryList = @{}
+    $appName = Read-Host "Enter application name (for display)"
+    $wingetId = Read-Host "Enter winget ID"
     
-    foreach ($cat in $categories) {
-        Write-Host "   [$i] $($cat.Name)" -ForegroundColor Green
-        $categoryList[$i] = $cat.Name
-        $i++
-    }
-    Write-Host ""
-    Write-Host "   [0] Back to main menu" -ForegroundColor Gray
-    Write-Host ""
-    Write-Host "================================================================================" -ForegroundColor Cyan
-    
-    $choice = Read-Host "Enter your choice"
-    if ($choice -eq "0") { return $null }
-    
-    if ($categoryList.ContainsKey([int]$choice)) {
-        return $categoryList[[int]$choice]
-    }
-    return $null
-}
-
-function Show-AppsByCategory {
-    param($CategoryName)
-    
-    Clear-Host
-    Show-Signature
-    Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "                    Applications in: $CategoryName" -ForegroundColor White
-    Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host ""
-    
-    $apps = $NiniteApps | Where-Object { $_.Category -eq $CategoryName }
-    $i = 1
-    $selectedApps = @()
-    
-    foreach ($app in $apps) {
-        Write-Host "   [$i] $($app.Name)" -ForegroundColor White
-        $i++
-    }
-    Write-Host ""
-    Write-Host "   [A] Select all" -ForegroundColor Green
-    Write-Host "   [D] Done selecting" -ForegroundColor Green
-    Write-Host "   [0] Back" -ForegroundColor Gray
-    Write-Host ""
-    
-    while ($true) {
-        $choice = Read-Host "Enter numbers (comma separated) or command"
-        if ($choice -eq "0") { return @() }
-        if ($choice -eq "A" -or $choice -eq "a") {
-            $selectedApps = $apps | ForEach-Object { $_.Code }
-            Write-Host "Selected all applications in this category!" -ForegroundColor Green
+    if ($appName -and $wingetId) {
+        $global:SelectedApps += [PSCustomObject]@{
+            Name = $appName
+            WingetId = $wingetId
         }
-        elseif ($choice -eq "D" -or $choice -eq "d") {
-            break
-        }
-        else {
-            $numbers = $choice -split ","
-            foreach ($num in $numbers) {
-                $idx = [int]$num.Trim() - 1
-                if ($idx -ge 0 -and $idx -lt $apps.Count) {
-                    if ($selectedApps -notcontains $apps[$idx].Code) {
-                        $selectedApps += $apps[$idx].Code
-                        Write-Host "Selected: $($apps[$idx].Name)" -ForegroundColor Green
-                    }
-                }
-            }
-        }
-    }
-    
-    return $selectedApps
-}
-
-function Show-AllApps {
-    Clear-Host
-    Show-Signature
-    Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "                    All Available Applications" -ForegroundColor White
-    Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host ""
-    Write-Host " Code                          Application Name                    Category" -ForegroundColor Yellow
-    Write-Host "--------------------------------------------------------------------------------" -ForegroundColor DarkGray
-    
-    foreach ($app in ($NiniteApps | Sort-Object Name)) {
-        Write-Host " $($app.Code.PadRight(30))" -NoNewline -ForegroundColor Cyan
-        Write-Host " $($app.Name.PadRight(35))" -NoNewline -ForegroundColor White
-        Write-Host " $($app.Category)" -ForegroundColor Gray
+        Write-Host ""
+        Write-Host "✓ Added: $appName ($wingetId)" -ForegroundColor Green
+    } else {
+        Write-Host ""
+        Write-Host "✗ Failed to add application" -ForegroundColor Red
     }
     
     Write-Host ""
-    Write-Host "================================================================================" -ForegroundColor Cyan
     Read-Host "Press Enter to continue"
 }
 
-function Build-NiniteInstaller {
-    param($SelectedCodes)
-    
-    if ($SelectedCodes.Count -eq 0) {
-        Write-Host "No applications selected!" -ForegroundColor Red
-        return $null
+function Remove-Application {
+    if ($global:SelectedApps.Count -eq 0) {
+        Write-Host ""
+        Write-Host "List is empty! Nothing to remove." -ForegroundColor Yellow
+        Read-Host "Press Enter to continue"
+        return
     }
     
-    # Build Ninite URL
-    $appsString = ($SelectedCodes -join ",")
-    $niniteUrl = "https://ninite.com/$appsString/ninite.exe"
-    
-    $outputPath = "$env:TEMP\ninite_installer.exe"
-    
-    Write-Host ""
-    Write-Host "Selected applications: $($SelectedCodes.Count)" -ForegroundColor Green
-    Write-Host "Downloading Ninite installer..." -ForegroundColor Yellow
-    
-    try {
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        Invoke-WebRequest -Uri $niniteUrl -OutFile $outputPath -UseBasicParsing
-        Write-Host "Download complete!" -ForegroundColor Green
-        return $outputPath
-    } catch {
-        Write-Host "Download failed: $($_.Exception.Message)" -ForegroundColor Red
-        return $null
-    }
-}
-
-function Select-Applications {
     Clear-Host
     Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "                    Select Applications to Install" -ForegroundColor White
+    Write-Host "                    Remove Application from List" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
     
-    $allSelected = @()
+    for ($i = 0; $i -lt $global:SelectedApps.Count; $i++) {
+        Write-Host "   [$($i+1)] $($global:SelectedApps[$i].Name) ($($global:SelectedApps[$i].WingetId))" -ForegroundColor White
+    }
     
-    do {
-        $category = Show-Categories
-        if ($category -eq $null) { break }
-        
-        $selected = Show-AppsByCategory -CategoryName $category
-        $allSelected += $selected
-        $allSelected = $allSelected | Select-Object -Unique
-        
+    Write-Host ""
+    Write-Host "   [0] Cancel" -ForegroundColor Gray
+    Write-Host ""
+    
+    $choice = Read-Host "Enter number to remove"
+    if ($choice -match "^\d+$" -and [int]$choice -gt 0 -and [int]$choice -le $global:SelectedApps.Count) {
+        $removed = $global:SelectedApps[[int]$choice - 1]
+        $global:SelectedApps = $global:SelectedApps | Where-Object { $_ -ne $removed }
         Write-Host ""
-        Write-Host "Currently selected: $($allSelected.Count) applications" -ForegroundColor Cyan
-        
-        $continue = Read-Host "Select another category? (y/n)"
-    } while ($continue -eq "y")
+        Write-Host "✓ Removed: $($removed.Name)" -ForegroundColor Green
+    }
     
-    return $allSelected
+    Write-Host ""
+    Read-Host "Press Enter to continue"
 }
 
-function Run-NiniteInstaller {
-    param($InstallerPath)
+function Show-CurrentList {
+    Clear-Host
+    Show-Signature
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host "                    Current Applications List" -ForegroundColor White
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host ""
     
-    if (-not $InstallerPath -or -not (Test-Path $InstallerPath)) {
-        Write-Host "Installer not found!" -ForegroundColor Red
+    if ($global:SelectedApps.Count -eq 0) {
+        Write-Host "   List is empty. Use option [1] to add applications." -ForegroundColor Yellow
+    } else {
+        Write-Host " Total: $($global:SelectedApps.Count) applications" -ForegroundColor Green
+        Write-Host ""
+        Write-Host " #   Application Name                    Winget ID" -ForegroundColor Cyan
+        Write-Host "---  ---------------------------------  ---------------------------------" -ForegroundColor DarkGray
+        
+        for ($i = 0; $i -lt $global:SelectedApps.Count; $i++) {
+            Write-Host " $($i+1)   $($global:SelectedApps[$i].Name.PadRight(35))" -NoNewline -ForegroundColor White
+            Write-Host " $($global:SelectedApps[$i].WingetId)" -ForegroundColor Yellow
+        }
+    }
+    
+    Write-Host ""
+    Read-Host "Press Enter to continue"
+}
+
+function Install-AllApplications {
+    if ($global:SelectedApps.Count -eq 0) {
+        Write-Host ""
+        Write-Host "List is empty! Add applications first." -ForegroundColor Yellow
+        Read-Host "Press Enter to continue"
+        return
+    }
+    
+    Clear-Host
+    Show-Signature
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host "                    Installing Applications" -ForegroundColor White
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host ""
+    
+    Write-Host "Applications to install:" -ForegroundColor Yellow
+    foreach ($app in $global:SelectedApps) {
+        Write-Host "  - $($app.Name)" -ForegroundColor White
+    }
+    
+    Write-Host ""
+    $confirm = Read-Host "Proceed with installation? (y/n)"
+    
+    if ($confirm -ne "y" -and $confirm -ne "Y") {
+        Write-Host "Installation cancelled." -ForegroundColor Red
+        Read-Host "Press Enter to continue"
         return
     }
     
     Write-Host ""
-    Write-Host "Starting Ninite installer..." -ForegroundColor Yellow
-    Write-Host "Note: Ninite will automatically install the latest versions silently" -ForegroundColor Gray
-    Write-Host "You can monitor the progress in the system tray" -ForegroundColor Gray
+    Write-Host "Starting installation..." -ForegroundColor Green
     Write-Host ""
     
-    $confirm = Read-Host "Start installation? (y/n)"
-    if ($confirm -eq "y") {
-        Start-Process -FilePath $InstallerPath -Wait
+    $successCount = 0
+    $failCount = 0
+    
+    foreach ($app in $global:SelectedApps) {
+        Write-Host ">>> Installing $($app.Name)..." -ForegroundColor Cyan
+        winget install $app.WingetId --accept-package-agreements --accept-source-agreements --silent
+        
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "[OK] $($app.Name) installed successfully!" -ForegroundColor Green
+            $successCount++
+        } else {
+            Write-Host "[FAIL] Failed to install $($app.Name)" -ForegroundColor Red
+            $failCount++
+        }
         Write-Host ""
-        Write-Host "Installation process completed!" -ForegroundColor Green
     }
+    
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host "Installation completed!" -ForegroundColor Green
+    Write-Host "Successful: $successCount | Failed: $failCount" -ForegroundColor Yellow
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host ""
+    Read-Host "Press Enter to continue"
 }
 
-function Install-Essentials {
-    Clear-Host
-    Show-Signature
-    Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "                    Essentials Pack Installation" -ForegroundColor White
-    Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host ""
-    Write-Host "The essentials pack includes:" -ForegroundColor Yellow
-    Write-Host "  - Google Chrome (Browser)" -ForegroundColor White
-    Write-Host "  - Firefox (Browser)" -ForegroundColor White
-    Write-Host "  - VLC (Media Player)" -ForegroundColor White
-    Write-Host "  - 7-Zip (Archive Utility)" -ForegroundColor White
-    Write-Host "  - Notepad++ (Text Editor)" -ForegroundColor White
-    Write-Host "  - Discord (Chat)" -ForegroundColor White
-    Write-Host "  - Spotify (Music)" -ForegroundColor White
-    Write-Host "  - Visual Studio Code (Code Editor)" -ForegroundColor White
-    Write-Host "  - Git (Version Control)" -ForegroundColor White
-    Write-Host "  - qBittorrent (Download Manager)" -ForegroundColor White
-    Write-Host ""
-    
-    $essentialsCodes = @("chrome", "firefox", "vlc", "7zip", "notepadplusplus", "discord", "spotify", "vscode", "git", "qbittorrent")
-    
-    $installer = Build-NiniteInstaller -SelectedCodes $essentialsCodes
-    if ($installer) {
-        Run-NiniteInstaller -InstallerPath $installer
+function Clear-List {
+    if ($global:SelectedApps.Count -eq 0) {
+        Write-Host "List is already empty." -ForegroundColor Yellow
+        Read-Host "Press Enter to continue"
+        return
     }
+    
+    Write-Host ""
+    $confirm = Read-Host "Are you sure you want to clear all $($global:SelectedApps.Count) applications? (y/n)"
+    
+    if ($confirm -eq "y" -or $confirm -eq "Y") {
+        $global:SelectedApps = @()
+        Write-Host "List cleared successfully!" -ForegroundColor Green
+    } else {
+        Write-Host "Operation cancelled." -ForegroundColor Yellow
+    }
+    
+    Read-Host "Press Enter to continue"
 }
 
 # Main program loop
 do {
     Show-MainMenu
-    $choice = Read-Host "Enter your choice (1-5)"
+    $choice = Read-Host "Enter your choice (1-6)"
     
     switch ($choice) {
-        "1" {
-            $selectedApps = Select-Applications
-            if ($selectedApps.Count -gt 0) {
-                $installer = Build-NiniteInstaller -SelectedCodes $selectedApps
-                if ($installer) {
-                    Run-NiniteInstaller -InstallerPath $installer
-                }
-            }
-        }
-        "2" {
-            Show-AllApps
-        }
-        "3" {
-            $selectedApps = Select-Applications
-            if ($selectedApps.Count -gt 0) {
-                $installer = Build-NiniteInstaller -SelectedCodes $selectedApps
-                if ($installer) {
-                    Run-NiniteInstaller -InstallerPath $installer
-                }
-            }
-        }
-        "4" {
-            Install-Essentials
-        }
-        "5" {
+        "1" { Add-Application }
+        "2" { Remove-Application }
+        "3" { Show-CurrentList }
+        "4" { Install-AllApplications }
+        "5" { Clear-List }
+        "6" {
             Clear-Host
             Show-Signature
             Write-Host ""
             Write-Host "================================================================================" -ForegroundColor Cyan
-            Write-Host "                   Thank you for using Ninite Installer!" -ForegroundColor White
+            Write-Host "                   Thank you for using Custom Installer!" -ForegroundColor White
             Write-Host "================================================================================" -ForegroundColor Cyan
             Write-Host ""
             Write-Host "                         Developed by: KARIM ABU RIDA" -ForegroundColor Yellow
@@ -329,8 +257,8 @@ do {
             break
         }
         default {
-            Write-Host "Invalid choice! Please enter 1-5" -ForegroundColor Red
+            Write-Host "Invalid choice! Please enter 1-6" -ForegroundColor Red
             Start-Sleep -Seconds 2
         }
     }
-} while ($choice -ne "5")
+} while ($choice -ne "6")
