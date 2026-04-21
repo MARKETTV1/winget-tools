@@ -47,7 +47,6 @@ $AppsList = @(
     @{Num=23; Name="WinRAR"; Id="WinRAR.WinRAR"}
     @{Num=24; Name="qBittorrent"; Id="qBittorrent.qBittorrent"}
     @{Num=25; Name="FileZilla"; Id="FileZilla.Client.FTP"}
-    # NEW APPS START HERE
     @{Num=26; Name="WhatsApp"; Id="WhatsApp.WhatsApp"}
     @{Num=27; Name="Signal"; Id="Signal.Signal"}
     @{Num=28; Name="Thunderbird"; Id="Mozilla.Thunderbird"}
@@ -83,22 +82,59 @@ $AppsList = @(
     @{Num=58; Name="GitHub Desktop"; Id="GitHub.GitHubDesktop"}
     @{Num=59; Name="Figma"; Id="Figma.Figma"}
     @{Num=60; Name="Unity Hub"; Id="Unity.UnityHub"}
+    # =============================================
+    # ADD NEW APPS BELOW THIS LINE
+    # =============================================
+    # @{Num=61; Name="App Name"; Id="App.Id"}
+    # @{Num=62; Name="Another App"; Id="Another.App"}
 )
 
 function Show-AllApps {
     Clear-Host
     Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "                    Available Applications" -ForegroundColor White
+    Write-Host "                    Available Applications (Three Columns)" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "  No.  Application Name" -ForegroundColor Yellow
-    Write-Host "  ---  ----------------------------------------" -ForegroundColor DarkGray
     
-    foreach ($app in $AppsList) {
-        Write-Host "  $($app.Num)    $($app.Name)" -ForegroundColor White
+    $perColumn = [math]::Ceiling($AppsList.Count / 3)
+    $col1 = $AppsList[0..($perColumn-1)]
+    $col2 = $AppsList[$perColumn..(($perColumn*2)-1)]
+    $col3 = $AppsList[($perColumn*2)..($AppsList.Count-1)]
+    
+    Write-Host "  Column 1                          Column 2                          Column 3" -ForegroundColor Yellow
+    Write-Host "  --------                          --------                          --------" -ForegroundColor DarkGray
+    
+    $maxLines = [math]::Max([math]::Max($col1.Count, $col2.Count), $col3.Count)
+    
+    for ($i = 0; $i -lt $maxLines; $i++) {
+        $col1Text = ""
+        $col2Text = ""
+        $col3Text = ""
+        
+        if ($i -lt $col1.Count) {
+            $col1Text = "  $($col1[$i].Num). $($col1[$i].Name)"
+            $col1Text = $col1Text.PadRight(35)
+        } else {
+            $col1Text = " " * 35
+        }
+        
+        if ($i -lt $col2.Count) {
+            $col2Text = "  $($col2[$i].Num). $($col2[$i].Name)"
+            $col2Text = $col2Text.PadRight(35)
+        } else {
+            $col2Text = " " * 35
+        }
+        
+        if ($i -lt $col3.Count) {
+            $col3Text = "  $($col3[$i].Num). $($col3[$i].Name)"
+        }
+        
+        Write-Host "$col1Text$col2Text$col3Text" -ForegroundColor White
     }
     
+    Write-Host ""
+    Write-Host "  Total: $($AppsList.Count) applications" -ForegroundColor Green
     Write-Host ""
     Write-Host "  [0] Back to main menu" -ForegroundColor Gray
     Write-Host ""
@@ -262,7 +298,7 @@ do {
     Write-Host "                    Installed Apps Scanner + Installer" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "   [1] Show all available apps (with numbers)" -ForegroundColor Green
+    Write-Host "   [1] Show all available apps (three columns)" -ForegroundColor Green
     Write-Host "   [2] Scan and show installed apps with versions" -ForegroundColor Cyan
     Write-Host "   [3] Install apps directly (by numbers, no scan)" -ForegroundColor Magenta
     Write-Host "   [4] Exit" -ForegroundColor Red
