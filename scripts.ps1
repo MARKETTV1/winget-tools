@@ -1,5 +1,5 @@
 #===============================================================================
-# Installed Apps Scanner - Show installed apps with current & latest versions
+# Installed Apps Scanner + Direct Installer
 # Created by: KARIM ABU RIDA
 # GitHub: MARKETTV1
 #===============================================================================
@@ -20,39 +20,52 @@ function Show-Signature {
     Write-Host "                                                                  " -ForegroundColor DarkGray
 }
 
-# List of apps to check
+# List of apps
 $AppsList = @(
-    @{Name="Google Chrome"; Id="Google.Chrome"}
-    @{Name="Mozilla Firefox"; Id="Mozilla.Firefox"}
-    @{Name="Brave Browser"; Id="Brave.Brave"}
-    @{Name="Microsoft Edge"; Id="Microsoft.Edge"}
-    @{Name="Visual Studio Code"; Id="Microsoft.VisualStudioCode"}
-    @{Name="7-Zip"; Id="7zip.7zip"}
-    @{Name="VLC Media Player"; Id="VideoLAN.VLC"}
-    @{Name="Discord"; Id="Discord.Discord"}
-    @{Name="Spotify"; Id="Spotify.Spotify"}
-    @{Name="Telegram"; Id="Telegram.TelegramDesktop"}
-    @{Name="Zoom"; Id="Zoom.Zoom"}
-    @{Name="Slack"; Id="Slack.Slack"}
-    @{Name="Git"; Id="Git.Git"}
-    @{Name="Node.js"; Id="OpenJS.NodeJS"}
-    @{Name="Python"; Id="Python.Python.3"}
-    @{Name="Notepad++"; Id="Notepad++.Notepad++"}
-    @{Name="GIMP"; Id="GIMP.GIMP"}
-    @{Name="Steam"; Id="Valve.Steam"}
-    @{Name="Epic Games"; Id="EpicGames.EpicGamesLauncher"}
-    @{Name="OBS Studio"; Id="OBSProject.OBSStudio"}
-    @{Name="Blender"; Id="BlenderFoundation.Blender"}
-    @{Name="Adobe Reader"; Id="Adobe.Acrobat.Reader.64-bit"}
-    @{Name="WinRAR"; Id="WinRAR.WinRAR"}
-    @{Name="qBittorrent"; Id="qBittorrent.qBittorrent"}
-    @{Name="FileZilla"; Id="FileZilla.Client.FTP"}
-    @{Name="TeamViewer"; Id="TeamViewer.TeamViewer"}
-    @{Name="Putty"; Id="PuTTY.PuTTY"}
-    @{Name="Wireshark"; Id="WiresharkFoundation.Wireshark"}
-    @{Name="VirtualBox"; Id="Oracle.VirtualBox"}
-    @{Name="Docker Desktop"; Id="Docker.DockerDesktop"}
+    @{Num=1; Name="Google Chrome"; Id="Google.Chrome"}
+    @{Num=2; Name="Mozilla Firefox"; Id="Mozilla.Firefox"}
+    @{Num=3; Name="Brave Browser"; Id="Brave.Brave"}
+    @{Num=4; Name="Microsoft Edge"; Id="Microsoft.Edge"}
+    @{Num=5; Name="Visual Studio Code"; Id="Microsoft.VisualStudioCode"}
+    @{Num=6; Name="7-Zip"; Id="7zip.7zip"}
+    @{Num=7; Name="VLC Media Player"; Id="VideoLAN.VLC"}
+    @{Num=8; Name="Discord"; Id="Discord.Discord"}
+    @{Num=9; Name="Spotify"; Id="Spotify.Spotify"}
+    @{Num=10; Name="Telegram"; Id="Telegram.TelegramDesktop"}
+    @{Num=11; Name="Zoom"; Id="Zoom.Zoom"}
+    @{Num=12; Name="Slack"; Id="Slack.Slack"}
+    @{Num=13; Name="Git"; Id="Git.Git"}
+    @{Num=14; Name="Node.js"; Id="OpenJS.NodeJS"}
+    @{Num=15; Name="Python"; Id="Python.Python.3"}
+    @{Num=16; Name="Notepad++"; Id="Notepad++.Notepad++"}
+    @{Num=17; Name="GIMP"; Id="GIMP.GIMP"}
+    @{Num=18; Name="Steam"; Id="Valve.Steam"}
+    @{Num=19; Name="Epic Games"; Id="EpicGames.EpicGamesLauncher"}
+    @{Num=20; Name="OBS Studio"; Id="OBSProject.OBSStudio"}
+    @{Num=21; Name="Blender"; Id="BlenderFoundation.Blender"}
+    @{Num=22; Name="Adobe Reader"; Id="Adobe.Acrobat.Reader.64-bit"}
+    @{Num=23; Name="WinRAR"; Id="WinRAR.WinRAR"}
+    @{Num=24; Name="qBittorrent"; Id="qBittorrent.qBittorrent"}
+    @{Num=25; Name="FileZilla"; Id="FileZilla.Client.FTP"}
 )
+
+function Show-AllApps {
+    Clear-Host
+    Show-Signature
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host "                    Available Applications" -ForegroundColor White
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "  No.  Application Name" -ForegroundColor Yellow
+    Write-Host "  ---  ----------------------------------------" -ForegroundColor DarkGray
+    
+    foreach ($app in $AppsList) {
+        Write-Host "  $($app.Num)    $($app.Name)" -ForegroundColor White
+    }
+    
+    Write-Host ""
+    Write-Host "================================================================================" -ForegroundColor Cyan
+}
 
 function Get-InstalledVersion {
     param($Id)
@@ -99,6 +112,7 @@ function Scan-InstalledApps {
         if ($installed) {
             $latest = Get-LatestVersion -Id $app.Id
             $results += [PSCustomObject]@{
+                Num = $app.Num
                 Name = $app.Name
                 CurrentVersion = $installed
                 LatestVersion = $latest
@@ -108,7 +122,6 @@ function Scan-InstalledApps {
     
     Write-Progress -Activity "Scanning..." -Completed
     
-    # Display results
     Clear-Host
     Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
@@ -118,11 +131,12 @@ function Scan-InstalledApps {
     Write-Host "Found $($results.Count) installed applications" -ForegroundColor Green
     Write-Host ""
     Write-Host "================================================================================================" -ForegroundColor DarkGray
-    Write-Host " Application Name                          Current Version           Latest Version" -ForegroundColor Yellow
+    Write-Host " No. Application Name                          Current Version           Latest Version" -ForegroundColor Yellow
     Write-Host "================================================================================================" -ForegroundColor DarkGray
     
     foreach ($app in ($results | Sort-Object Name)) {
-        Write-Host " $($app.Name.PadRight(40))" -NoNewline -ForegroundColor White
+        Write-Host " $($app.Num). " -NoNewline -ForegroundColor Cyan
+        Write-Host "$($app.Name.PadRight(40))" -NoNewline -ForegroundColor White
         Write-Host " $($app.CurrentVersion.PadRight(25))" -NoNewline -ForegroundColor Cyan
         
         if ($app.CurrentVersion -eq $app.LatestVersion) {
@@ -137,7 +151,6 @@ function Scan-InstalledApps {
     Write-Host "================================================================================================" -ForegroundColor DarkGray
     Write-Host ""
     
-    # Summary
     $updatesCount = 0
     foreach ($app in $results) {
         if ($app.CurrentVersion -ne $app.LatestVersion -and $app.LatestVersion -ne "Unknown") {
@@ -147,11 +160,6 @@ function Scan-InstalledApps {
     
     if ($updatesCount -gt 0) {
         Write-Host "Updates available: $updatesCount applications" -ForegroundColor Yellow
-        Write-Host ""
-        Write-Host "Apps with available updates:" -ForegroundColor Yellow
-        foreach ($app in ($results | Where-Object { $_.CurrentVersion -ne $_.LatestVersion -and $_.LatestVersion -ne "Unknown" })) {
-            Write-Host "  - $($app.Name): $($app.CurrentVersion) -> $($app.LatestVersion)" -ForegroundColor White
-        }
     } else {
         Write-Host "All installed applications are up to date!" -ForegroundColor Green
     }
@@ -160,28 +168,102 @@ function Scan-InstalledApps {
     return $results
 }
 
+function Install-ByNumbers {
+    param($Numbers)
+    
+    $selected = @()
+    foreach ($num in $Numbers) {
+        $app = $AppsList | Where-Object { $_.Num -eq $num }
+        if ($app) { $selected += $app }
+    }
+    
+    if ($selected.Count -eq 0) {
+        Write-Host "No valid applications selected!" -ForegroundColor Red
+        return $false
+    }
+    
+    Write-Host ""
+    Write-Host "Selected applications:" -ForegroundColor Green
+    foreach ($app in $selected) {
+        Write-Host "  - $($app.Name)" -ForegroundColor White
+    }
+    
+    Write-Host ""
+    $confirm = Read-Host "Proceed with installation? (y/n)"
+    if ($confirm -ne "y") {
+        Write-Host "Installation cancelled." -ForegroundColor Red
+        return $false
+    }
+    
+    Write-Host ""
+    Write-Host "Starting installation..." -ForegroundColor Yellow
+    Write-Host ""
+    
+    foreach ($app in $selected) {
+        Write-Host ">>> Installing $($app.Name)..." -ForegroundColor Cyan
+        winget install $app.Id --accept-package-agreements --accept-source-agreements --silent
+        
+        if ($LASTEXITCODE -eq 0 -or $LASTEXITCODE -eq 1 -or $LASTEXITCODE -eq -1978335189) {
+            Write-Host "[✓] $($app.Name) installed successfully!" -ForegroundColor Green
+        } else {
+            Write-Host "[✗] Failed to install $($app.Name)" -ForegroundColor Red
+        }
+        Write-Host ""
+    }
+    
+    return $true
+}
+
 # Main menu
 do {
     Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "                    Installed Apps Scanner" -ForegroundColor White
+    Write-Host "                    Installed Apps Scanner + Installer" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "   [1] Scan and show installed apps with versions" -ForegroundColor Green
-    Write-Host "   [2] Exit" -ForegroundColor Red
+    Write-Host "   [1] Show all available apps (with numbers)" -ForegroundColor Green
+    Write-Host "   [2] Scan and show installed apps with versions" -ForegroundColor Cyan
+    Write-Host "   [3] Install apps directly (by numbers, no scan)" -ForegroundColor Magenta
+    Write-Host "   [4] Exit" -ForegroundColor Red
     Write-Host ""
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                         Developed by: KARIM ABU RIDA" -ForegroundColor Yellow
     Write-Host "================================================================================" -ForegroundColor Cyan
     
-    $choice = Read-Host "`nEnter your choice (1-2)"
+    $choice = Read-Host "`nEnter your choice (1-4)"
     
     switch ($choice) {
         "1" {
-            $results = Scan-InstalledApps
+            Show-AllApps
             Read-Host "Press Enter to continue"
         }
         "2" {
+            Scan-InstalledApps
+            Read-Host "`nPress Enter to continue"
+        }
+        "3" {
+            Show-AllApps
+            Write-Host ""
+            Write-Host "Examples: 1,2,3  or  1 2 3  or  1,2,3,9,15" -ForegroundColor Gray
+            $input = Read-Host "Enter numbers (spaces or commas)"
+            
+            $input = $input -replace " ", ","
+            $numbers = @()
+            foreach ($n in ($input -split ",")) {
+                $num = $n.Trim()
+                if ($num -match "^\d+$") {
+                    $numbers += [int]$num
+                }
+            }
+            
+            if ($numbers.Count -gt 0) {
+                Install-ByNumbers -Numbers $numbers
+            } else {
+                Write-Host "No valid numbers entered!" -ForegroundColor Red
+            }
+            Read-Host "`nPress Enter to continue"
+        }
+        "4" {
             Clear-Host
             Show-Signature
             Write-Host ""
@@ -195,4 +277,4 @@ do {
             Start-Sleep -Seconds 1
         }
     }
-} while ($choice -ne "2")
+} while ($choice -ne "4")
