@@ -1,6 +1,5 @@
 ### winget-tools
 
-''''
-bash
+''''bash
 https://urli.info/1nXJh
 ''''
