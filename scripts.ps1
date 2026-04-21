@@ -20,93 +20,118 @@ function Show-Signature {
     Write-Host "                                                                  " -ForegroundColor DarkGray
 }
 
-# List of apps
+# List of apps (winget IDs + custom apps)
 $AppsList = @(
-    @{Num=1; Name="Google Chrome"; Id="Google.Chrome"}
-    @{Num=2; Name="Mozilla Firefox"; Id="Mozilla.Firefox"}
-    @{Num=3; Name="Brave Browser"; Id="Brave.Brave"}
-    @{Num=4; Name="Microsoft Edge"; Id="Microsoft.Edge"}
-    @{Num=5; Name="Visual Studio Code"; Id="Microsoft.VisualStudioCode"}
-    @{Num=6; Name="7-Zip"; Id="7zip.7zip"}
-    @{Num=7; Name="VLC Media Player"; Id="VideoLAN.VLC"}
-    @{Num=8; Name="Discord"; Id="Discord.Discord"}
-    @{Num=9; Name="Spotify"; Id="Spotify.Spotify"}
-    @{Num=10; Name="Telegram"; Id="Telegram.TelegramDesktop"}
-    @{Num=11; Name="Zoom"; Id="Zoom.Zoom"}
-    @{Num=12; Name="Slack"; Id="Slack.Slack"}
-    @{Num=13; Name="Git"; Id="Git.Git"}
-    @{Num=14; Name="Node.js"; Id="OpenJS.NodeJS"}
-    @{Num=15; Name="Python"; Id="Python.Python.3"}
-    @{Num=16; Name="Notepad++"; Id="Notepad++.Notepad++"}
-    @{Num=17; Name="GIMP"; Id="GIMP.GIMP"}
-    @{Num=18; Name="Steam"; Id="Valve.Steam"}
-    @{Num=19; Name="Epic Games"; Id="EpicGames.EpicGamesLauncher"}
-    @{Num=20; Name="OBS Studio"; Id="OBSProject.OBSStudio"}
-    @{Num=21; Name="Blender"; Id="BlenderFoundation.Blender"}
-    @{Num=22; Name="Adobe Reader"; Id="Adobe.Acrobat.Reader.64-bit"}
-    @{Num=23; Name="WinRAR"; Id="WinRAR.WinRAR"}
-    @{Num=24; Name="qBittorrent"; Id="qBittorrent.qBittorrent"}
-    @{Num=25; Name="FileZilla"; Id="FileZilla.Client.FTP"}
-    @{Num=26; Name="WhatsApp"; Id="WhatsApp.WhatsApp"}
-    @{Num=27; Name="Signal"; Id="Signal.Signal"}
-    @{Num=28; Name="Thunderbird"; Id="Mozilla.Thunderbird"}
-    @{Num=29; Name="LibreOffice"; Id="TheDocumentFoundation.LibreOffice"}
-    @{Num=30; Name="Audacity"; Id="Audacity.Audacity"}
-    @{Num=31; Name="Inkscape"; Id="Inkscape.Inkscape"}
-    @{Num=32; Name="KeePass"; Id="KeePassXCTeam.KeePassXC"}
-    @{Num=33; Name="Rufus"; Id="Rufus.Rufus"}
-    @{Num=34; Name="CPU-Z"; Id="CPUID.CPU-Z"}
-    @{Num=35; Name="HWMonitor"; Id="CPUID.HWMonitor"}
-    @{Num=36; Name="CrystalDiskInfo"; Id="CrystalDewWorld.CrystalDiskInfo"}
-    @{Num=37; Name="CrystalDiskMark"; Id="CrystalDewWorld.CrystalDiskMark"}
-    @{Num=38; Name="VeraCrypt"; Id="IDRIX.VeraCrypt"}
-    @{Num=39; Name="Everything"; Id="voidtools.Everything"}
-    @{Num=40; Name="ShareX"; Id="ShareX.ShareX"}
-    @{Num=41; Name="HandBrake"; Id="HandBrake.HandBrake"}
-    @{Num=42; Name="Krita"; Id="Krita.Krita"}
-    @{Num=43; Name="Darktable"; Id="darktable.darktable"}
-    @{Num=44; Name="XnView"; Id="XnSoft.XnView"}
-    @{Num=45; Name="IrfanView"; Id="IrfanSkiljan.IrfanView"}
-    @{Num=46; Name="SumatraPDF"; Id="SumatraPDF.SumatraPDF"}
-    @{Num=47; Name="Calibre"; Id="Calibre.Calibre"}
-    @{Num=48; Name="JDownloader"; Id="AppWork.JDownloader"}
-    @{Num=49; Name="Transmission"; Id="Transmission.Transmission"}
-    @{Num=50; Name="TeamViewer"; Id="TeamViewer.TeamViewer"}
-    @{Num=51; Name="Putty"; Id="PuTTY.PuTTY"}
-    @{Num=52; Name="WinSCP"; Id="WinSCP.WinSCP"}
-    @{Num=53; Name="Wireshark"; Id="WiresharkFoundation.Wireshark"}
-    @{Num=54; Name="VirtualBox"; Id="Oracle.VirtualBox"}
-    @{Num=55; Name="Docker Desktop"; Id="Docker.DockerDesktop"}
-    @{Num=56; Name="MySQL Workbench"; Id="Oracle.MySQLWorkbench"}
-    @{Num=57; Name="Postman"; Id="Postman.Postman"}
-    @{Num=58; Name="MongoDB Compass"; Id="MongoDB.Compass"}
-    @{Num=59; Name="GitHub Desktop"; Id="GitHub.GitHubDesktop"}
-    @{Num=60; Name="Figma"; Id="Figma.Figma"}
-    @{Num=61; Name="Unity Hub"; Id="Unity.UnityHub"}
-    @{Num=62; Name="Revo Uninstaller"; Id="RevoGroup.RevoUninstaller"}
-    @{Num=63; Name="PowerISO"; Id="PowerSoftware.PowerISO"}
-    @{Num=64; Name="UltraISO"; Id="EZBSystems.UltraISO"}
-    @{Num=65; Name="SuperCopier"; Id="SuperCopier.SuperCopier"}
-    @{Num=66; Name="UltraCopier"; Id="UltraCopier.UltraCopier"}
-    @{Num=67; Name="Microsoft Teams"; Id="Microsoft.Teams"}
-    @{Num=68; Name="Winshot"; Id="Winshot.Winshot"}
-    @{Num=69; Name="AnyDesk"; Id="AnyDeskSoftwareGmbH.AnyDesk"}
-    @{Num=70; Name="CCleaner"; Id="Piriform.CCleaner"}
-    @{Num=71; Name="Avast Free Antivirus"; Id="AvastSoftware.AvastAntivirus"}
-    @{Num=72; Name="Avira Antivirus"; Id="Avira.Avira"}
-    @{Num=73; Name="ESET NOD32"; Id="ESET.ESETNOD32"}
-    @{Num=74; Name="AVG Antivirus"; Id="AVG.AVGAntivirus"}
-    @{Num=75; Name="CutePDF Writer"; Id="CutePDF.CutePDFWriter"}
-    @{Num=76; Name="OpenOffice"; Id="Apache.OpenOffice"}
-    @{Num=77; Name="PeaZip"; Id="PeaZip.PeaZip"}
-    # NEW APPS
-    @{Num=78; Name="TeraCopy"; Id="CodeSector.TeraCopy"}
-    @{Num=79; Name="Google Earth Pro"; Id="Google.GoogleEarthPro"}
-    @{Num=80; Name="Microsoft Toolkit"; Id="Microsoft.Toolkit"}
-    # =============================================
-    # ADD NEW APPS BELOW THIS LINE
-    # =============================================
+    @{Num=1; Name="Google Chrome"; Id="Google.Chrome"; Type="winget"}
+    @{Num=2; Name="Mozilla Firefox"; Id="Mozilla.Firefox"; Type="winget"}
+    @{Num=3; Name="Brave Browser"; Id="Brave.Brave"; Type="winget"}
+    @{Num=4; Name="Microsoft Edge"; Id="Microsoft.Edge"; Type="winget"}
+    @{Num=5; Name="Visual Studio Code"; Id="Microsoft.VisualStudioCode"; Type="winget"}
+    @{Num=6; Name="7-Zip"; Id="7zip.7zip"; Type="winget"}
+    @{Num=7; Name="VLC Media Player"; Id="VideoLAN.VLC"; Type="winget"}
+    @{Num=8; Name="Discord"; Id="Discord.Discord"; Type="winget"}
+    @{Num=9; Name="Spotify"; Id="Spotify.Spotify"; Type="winget"}
+    @{Num=10; Name="Telegram"; Id="Telegram.TelegramDesktop"; Type="winget"}
+    @{Num=11; Name="Zoom"; Id="Zoom.Zoom"; Type="winget"}
+    @{Num=12; Name="Slack"; Id="Slack.Slack"; Type="winget"}
+    @{Num=13; Name="Git"; Id="Git.Git"; Type="winget"}
+    @{Num=14; Name="Node.js"; Id="OpenJS.NodeJS"; Type="winget"}
+    @{Num=15; Name="Python"; Id="Python.Python.3"; Type="winget"}
+    @{Num=16; Name="Notepad++"; Id="Notepad++.Notepad++"; Type="winget"}
+    @{Num=17; Name="GIMP"; Id="GIMP.GIMP"; Type="winget"}
+    @{Num=18; Name="Steam"; Id="Valve.Steam"; Type="winget"}
+    @{Num=19; Name="Epic Games Launcher"; Id="EpicGames.EpicGamesLauncher"; Type="winget"}
+    @{Num=20; Name="OBS Studio"; Id="OBSProject.OBSStudio"; Type="winget"}
+    @{Num=21; Name="Blender"; Id="BlenderFoundation.Blender"; Type="winget"}
+    @{Num=22; Name="Adobe Acrobat Reader"; Id="Adobe.Acrobat.Reader.64-bit"; Type="winget"}
+    @{Num=23; Name="WinRAR"; Id="WinRAR.WinRAR"; Type="winget"}
+    @{Num=24; Name="qBittorrent"; Id="qBittorrent.qBittorrent"; Type="winget"}
+    @{Num=25; Name="FileZilla"; Id="FileZilla.Client.FTP"; Type="winget"}
+    @{Num=26; Name="WhatsApp"; Id="WhatsApp.WhatsApp"; Type="winget"}
+    @{Num=27; Name="Signal"; Id="Signal.Signal"; Type="winget"}
+    @{Num=28; Name="Thunderbird"; Id="Mozilla.Thunderbird"; Type="winget"}
+    @{Num=29; Name="LibreOffice"; Id="TheDocumentFoundation.LibreOffice"; Type="winget"}
+    @{Num=30; Name="Audacity"; Id="Audacity.Audacity"; Type="winget"}
+    @{Num=31; Name="Inkscape"; Id="Inkscape.Inkscape"; Type="winget"}
+    @{Num=32; Name="KeePassXC"; Id="KeePassXCTeam.KeePassXC"; Type="winget"}
+    @{Num=33; Name="Rufus"; Id="Rufus.Rufus"; Type="winget"}
+    @{Num=34; Name="CPU-Z"; Id="CPUID.CPU-Z"; Type="winget"}
+    @{Num=35; Name="HWMonitor"; Id="CPUID.HWMonitor"; Type="winget"}
+    @{Num=36; Name="CrystalDiskInfo"; Id="CrystalDewWorld.CrystalDiskInfo"; Type="winget"}
+    @{Num=37; Name="CrystalDiskMark"; Id="CrystalDewWorld.CrystalDiskMark"; Type="winget"}
+    @{Num=38; Name="VeraCrypt"; Id="IDRIX.VeraCrypt"; Type="winget"}
+    @{Num=39; Name="Everything"; Id="voidtools.Everything"; Type="winget"}
+    @{Num=40; Name="ShareX"; Id="ShareX.ShareX"; Type="winget"}
+    @{Num=41; Name="HandBrake"; Id="HandBrake.HandBrake"; Type="winget"}
+    @{Num=42; Name="Krita"; Id="Krita.Krita"; Type="winget"}
+    @{Num=43; Name="Darktable"; Id="darktable.darktable"; Type="winget"}
+    @{Num=44; Name="XnView"; Id="XnSoft.XnView"; Type="winget"}
+    @{Num=45; Name="IrfanView"; Id="IrfanSkiljan.IrfanView"; Type="winget"}
+    @{Num=46; Name="SumatraPDF"; Id="SumatraPDF.SumatraPDF"; Type="winget"}
+    @{Num=47; Name="Calibre"; Id="Calibre.Calibre"; Type="winget"}
+    @{Num=48; Name="JDownloader"; Id="AppWork.JDownloader"; Type="winget"}
+    @{Num=49; Name="Transmission"; Id="Transmission.Transmission"; Type="winget"}
+    @{Num=50; Name="TeamViewer"; Id="TeamViewer.TeamViewer"; Type="winget"}
+    @{Num=51; Name="PuTTY"; Id="PuTTY.PuTTY"; Type="winget"}
+    @{Num=52; Name="WinSCP"; Id="WinSCP.WinSCP"; Type="winget"}
+    @{Num=53; Name="Wireshark"; Id="WiresharkFoundation.Wireshark"; Type="winget"}
+    @{Num=54; Name="VirtualBox"; Id="Oracle.VirtualBox"; Type="winget"}
+    @{Num=55; Name="Docker Desktop"; Id="Docker.DockerDesktop"; Type="winget"}
+    @{Num=56; Name="MySQL Workbench"; Id="Oracle.MySQLWorkbench"; Type="winget"}
+    @{Num=57; Name="Postman"; Id="Postman.Postman"; Type="winget"}
+    @{Num=58; Name="MongoDB Compass"; Id="MongoDB.Compass"; Type="winget"}
+    @{Num=59; Name="GitHub Desktop"; Id="GitHub.GitHubDesktop"; Type="winget"}
+    @{Num=60; Name="Figma"; Id="Figma.Figma"; Type="winget"}
+    @{Num=61; Name="Unity Hub"; Id="Unity.UnityHub"; Type="winget"}
+    @{Num=62; Name="Revo Uninstaller"; Id="RevoGroup.RevoUninstaller"; Type="winget"}
+    @{Num=63; Name="PowerISO"; Id="PowerSoftware.PowerISO"; Type="winget"}
+    @{Num=64; Name="UltraISO"; Id="EZBSystems.UltraISO"; Type="winget"}
+    @{Num=65; Name="TeraCopy"; Id="CodeSector.TeraCopy"; Type="winget"}
+    @{Num=66; Name="Google Earth Pro"; Id="Google.GoogleEarthPro"; Type="winget"}
+    @{Num=67; Name="Microsoft Teams"; Id="Microsoft.Teams"; Type="winget"}
+    @{Num=68; Name="AnyDesk"; Id="AnyDeskSoftwareGmbH.AnyDesk"; Type="winget"}
+    @{Num=69; Name="CCleaner"; Id="Piriform.CCleaner"; Type="winget"}
+    @{Num=70; Name="Avast Free Antivirus"; Id="AvastSoftware.AvastAntivirus"; Type="winget"}
+    @{Num=71; Name="Avira Antivirus"; Id="Avira.AviraAntivirus"; Type="winget"}
+    @{Num=72; Name="ESET NOD32"; Id="ESET.ESETNOD32"; Type="winget"}
+    @{Num=73; Name="AVG Antivirus"; Id="AVG.AVGAntivirus"; Type="winget"}
+    @{Num=74; Name="CutePDF Writer"; Id="CutePDF.CutePDFWriter"; Type="winget"}
+    @{Num=75; Name="Apache OpenOffice"; Id="Apache.OpenOffice"; Type="winget"}
+    @{Num=76; Name="PeaZip"; Id="PeaZip.PeaZip"; Type="winget"}
+    # Custom apps (not in winget)
+    @{Num=77; Name="Winshot"; Id="custom"; Type="custom"; Url="https://github.com/mrgoonie/winshot/releases/download/v1.6.0/winshot.exe"; SilentArg="/S"}
 )
+
+function Install-CustomApp {
+    param($App)
+    
+    Write-Host ">>> Installing $($App.Name)..." -ForegroundColor Cyan
+    Write-Host "    Downloading from GitHub..." -ForegroundColor Gray
+    
+    $installer = "$env:TEMP\$($App.Name -replace ' ', '_')_installer.exe"
+    
+    try {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        Invoke-WebRequest -Uri $App.Url -OutFile $installer -UseBasicParsing -ErrorAction Stop
+        Write-Host "    Download complete!" -ForegroundColor Gray
+        
+        Write-Host "    Installing..." -ForegroundColor Gray
+        $process = Start-Process $installer -ArgumentList $App.SilentArg -Wait -PassThru -NoNewWindow
+        
+        Remove-Item $installer -Force -ErrorAction SilentlyContinue
+        
+        if ($process.ExitCode -eq 0) {
+            Write-Host "[✓] $($App.Name) installed successfully!" -ForegroundColor Green
+            return $true
+        } else {
+            Write-Host "[✓] $($App.Name) installation completed (Exit: $($process.ExitCode))" -ForegroundColor Green
+            return $true
+        }
+    } catch {
+        Write-Host "[✗] Failed to install $($App.Name): $($_.Exception.Message)" -ForegroundColor Red
+        return $false
+    }
+}
 
 function Show-AllApps {
     Clear-Host
@@ -133,6 +158,7 @@ function Show-AllApps {
         
         if ($i -lt $col1.Count) {
             $col1Text = "  $($col1[$i].Num). $($col1[$i].Name)"
+            if ($col1[$i].Type -eq "custom") { $col1Text = "  $($col1[$i].Num). $($col1[$i].Name) *" }
             $col1Text = $col1Text.PadRight(35)
         } else {
             $col1Text = " " * 35
@@ -140,6 +166,7 @@ function Show-AllApps {
         
         if ($i -lt $col2.Count) {
             $col2Text = "  $($col2[$i].Num). $($col2[$i].Name)"
+            if ($col2[$i].Type -eq "custom") { $col2Text = "  $($col2[$i].Num). $($col2[$i].Name) *" }
             $col2Text = $col2Text.PadRight(35)
         } else {
             $col2Text = " " * 35
@@ -147,12 +174,14 @@ function Show-AllApps {
         
         if ($i -lt $col3.Count) {
             $col3Text = "  $($col3[$i].Num). $($col3[$i].Name)"
+            if ($col3[$i].Type -eq "custom") { $col3Text = "  $($col3[$i].Num). $($col3[$i].Name) *" }
         }
         
         Write-Host "$col1Text$col2Text$col3Text" -ForegroundColor White
     }
     
     Write-Host ""
+    Write-Host "  * Custom app (direct download)" -ForegroundColor Yellow
     Write-Host "  Total: $($AppsList.Count) applications" -ForegroundColor Green
     Write-Host ""
     Write-Host "  [0] Back to main menu" -ForegroundColor Gray
@@ -162,6 +191,7 @@ function Show-AllApps {
 
 function Get-InstalledVersion {
     param($Id)
+    if ($Id -eq "custom") { return $null }
     try {
         $result = winget list --id $Id --accept-source-agreements 2>$null
         if ($result -match "$Id\s+(\S+)") {
@@ -172,9 +202,10 @@ function Get-InstalledVersion {
 }
 
 function Get-LatestVersion {
-    param($Id)
+    param($App)
+    if ($App.Type -eq "custom") { return "Custom App" }
     try {
-        $result = winget show $Id --accept-source-agreements 2>$null
+        $result = winget show $App.Id --accept-source-agreements 2>$null
         if ($result -match "Version:\s*(\S+)") {
             return $matches[1]
         }
@@ -200,15 +231,29 @@ function Scan-InstalledApps {
         $current++
         Write-Progress -Activity "Scanning..." -Status $app.Name -PercentComplete (($current / $total) * 100)
         
-        $installed = Get-InstalledVersion -Id $app.Id
-        
-        if ($installed) {
-            $latest = Get-LatestVersion -Id $app.Id
-            $results += [PSCustomObject]@{
-                Num = $app.Num
-                Name = $app.Name
-                CurrentVersion = $installed
-                LatestVersion = $latest
+        if ($app.Type -eq "custom") {
+            # Check if Winshot is installed by looking for the exe
+            $winshotPath = "$env:ProgramFiles\Winshot\winshot.exe"
+            if (Test-Path $winshotPath) {
+                $version = (Get-Item $winshotPath).VersionInfo.FileVersion
+                if (-not $version) { $version = "Installed" }
+                $results += [PSCustomObject]@{
+                    Num = $app.Num
+                    Name = $app.Name
+                    CurrentVersion = $version
+                    LatestVersion = "1.6.0"
+                }
+            }
+        } else {
+            $installed = Get-InstalledVersion -Id $app.Id
+            if ($installed) {
+                $latest = Get-LatestVersion -App $app
+                $results += [PSCustomObject]@{
+                    Num = $app.Num
+                    Name = $app.Name
+                    CurrentVersion = $installed
+                    LatestVersion = $latest
+                }
             }
         }
     }
@@ -234,7 +279,7 @@ function Scan-InstalledApps {
         
         if ($app.CurrentVersion -eq $app.LatestVersion) {
             Write-Host " $($app.LatestVersion)" -ForegroundColor Green
-        } elseif ($app.LatestVersion -eq "Unknown") {
+        } elseif ($app.LatestVersion -eq "Unknown" -or $app.LatestVersion -eq "Custom App") {
             Write-Host " $($app.LatestVersion)" -ForegroundColor Gray
         } else {
             Write-Host " $($app.LatestVersion)" -ForegroundColor Yellow
@@ -246,7 +291,7 @@ function Scan-InstalledApps {
     
     $updatesCount = 0
     foreach ($app in $results) {
-        if ($app.CurrentVersion -ne $app.LatestVersion -and $app.LatestVersion -ne "Unknown") {
+        if ($app.CurrentVersion -ne $app.LatestVersion -and $app.LatestVersion -ne "Unknown" -and $app.LatestVersion -ne "Custom App") {
             $updatesCount++
         }
     }
@@ -281,7 +326,8 @@ function Install-ByNumbers {
     Write-Host ""
     Write-Host "Selected applications:" -ForegroundColor Green
     foreach ($app in $selected) {
-        Write-Host "  - $($app.Name)" -ForegroundColor White
+        $typeInfo = if ($app.Type -eq "custom") { " (custom download)" } else { "" }
+        Write-Host "  - $($app.Name)$typeInfo" -ForegroundColor White
     }
     
     Write-Host ""
@@ -296,13 +342,17 @@ function Install-ByNumbers {
     Write-Host ""
     
     foreach ($app in $selected) {
-        Write-Host ">>> Installing $($app.Name)..." -ForegroundColor Cyan
-        winget install $app.Id --accept-package-agreements --accept-source-agreements --silent
-        
-        if ($LASTEXITCODE -eq 0 -or $LASTEXITCODE -eq 1 -or $LASTEXITCODE -eq -1978335189) {
-            Write-Host "[✓] $($app.Name) installed successfully!" -ForegroundColor Green
+        if ($app.Type -eq "custom") {
+            Install-CustomApp -App $app
         } else {
-            Write-Host "[✗] Failed to install $($app.Name)" -ForegroundColor Red
+            Write-Host ">>> Installing $($app.Name)..." -ForegroundColor Cyan
+            winget install $app.Id --accept-package-agreements --accept-source-agreements --silent
+            
+            if ($LASTEXITCODE -eq 0 -or $LASTEXITCODE -eq 1 -or $LASTEXITCODE -eq -1978335189) {
+                Write-Host "[✓] $($app.Name) installed successfully!" -ForegroundColor Green
+            } else {
+                Write-Host "[✗] Failed to install $($app.Name)" -ForegroundColor Red
+            }
         }
         Write-Host ""
     }
@@ -344,6 +394,7 @@ do {
             Write-Host ""
             Write-Host "Examples: 1,2,3  or  1 2 3  or  1,2,3,9,15" -ForegroundColor Gray
             Write-Host "  [0] Back to main menu" -ForegroundColor Gray
+            Write-Host "  * = Custom app (direct download from GitHub)" -ForegroundColor Yellow
             Write-Host ""
             $input = Read-Host "Enter numbers (spaces or commas)"
             
