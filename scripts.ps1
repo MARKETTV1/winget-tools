@@ -1,13 +1,12 @@
 #===============================================================================
-# Applications Installer - Select by Number
+# Applications Installer - Select by Number (Improved)
 # Created by: KARIM ABU RIDA
-# Version: 1.0
-# Description: Install applications by selecting numbers, no IDs needed
+# Version: 1.1
 #===============================================================================
 
 Clear-Host
 
-# قائمة التطبيقات مع أسمائها ومعرفات winget
+# قائمة التطبيقات
 $AppsList = @(
     @{Number = 1;  Name = "Google Chrome";           WingetId = "Google.Chrome"}
     @{Number = 2;  Name = "Mozilla Firefox";         WingetId = "Mozilla.Firefox"}
@@ -68,6 +67,30 @@ function Show-AppsList {
     Write-Host "================================================================================" -ForegroundColor Cyan
 }
 
+function Parse-Numbers {
+    param($InputString)
+    
+    $numbers = @()
+    
+    # استبدال المسافات والفواصل العربية بفواصل إنجليزية
+    $cleanInput = $InputString -replace " ", "," -replace "،", ","
+    
+    # تقسيم الإدخال
+    $parts = $cleanInput -split ","
+    
+    foreach ($part in $parts) {
+        $part = $part.Trim()
+        if ($part -match "^\d+$") {
+            $num = [int]$part
+            if ($num -ge 1 -and $num -le $AppsList.Count) {
+                $numbers += $num
+            }
+        }
+    }
+    
+    return $numbers | Select-Object -Unique
+}
+
 function Install-ByNumbers {
     param($SelectedNumbers)
     
@@ -82,7 +105,7 @@ function Install-ByNumbers {
     
     if ($selectedApps.Count -eq 0) {
         Write-Host "No valid applications selected!" -ForegroundColor Red
-        return
+        return $false
     }
     
     Write-Host ""
@@ -95,7 +118,7 @@ function Install-ByNumbers {
     $confirm = Read-Host "Proceed with installation? (y/n)"
     if ($confirm -ne "y" -and $confirm -ne "Y") {
         Write-Host "Installation cancelled." -ForegroundColor Red
-        return
+        return $false
     }
     
     Write-Host ""
@@ -123,23 +146,8 @@ function Install-ByNumbers {
     Write-Host "Installation completed!" -ForegroundColor Green
     Write-Host "Successful: $successCount | Failed: $failCount" -ForegroundColor Yellow
     Write-Host "================================================================================" -ForegroundColor Cyan
-}
-
-function Show-MainMenu {
-    Clear-Host
-    Show-Signature
-    Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "              Application Installer - Select by Number" -ForegroundColor White
-    Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host ""
-    Write-Host "   [1] Show all applications" -ForegroundColor Green
-    Write-Host "   [2] Install application(s) by number" -ForegroundColor Cyan
-    Write-Host "   [3] Install essential pack (browser + essentials)" -ForegroundColor Magenta
-    Write-Host "   [4] Exit" -ForegroundColor Red
-    Write-Host ""
-    Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "                         Developed by: KARIM ABU RIDA" -ForegroundColor Yellow
-    Write-Host "================================================================================" -ForegroundColor Cyan
+    
+    return $true
 }
 
 function Install-EssentialsPack {
@@ -150,7 +158,7 @@ function Install-EssentialsPack {
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
     
-    $essentialsNumbers = @(1, 2, 5, 6, 7, 16)  # Chrome, Firefox, VSCode, 7-Zip, VLC, Notepad++
+    $essentialsNumbers = @(1, 2, 5, 6, 7, 16)
     
     Write-Host "The following applications will be installed:" -ForegroundColor Yellow
     foreach ($num in $essentialsNumbers) {
@@ -169,8 +177,26 @@ function Install-EssentialsPack {
     }
     
     Install-ByNumbers -SelectedNumbers $essentialsNumbers
-    
     Read-Host "Press Enter to continue"
+}
+
+function Show-MainMenu {
+    Clear-Host
+    Show-Signature
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host "              Application Installer - Select by Number" -ForegroundColor White
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "   [1] Show all applications" -ForegroundColor Green
+    Write-Host "   [2] Install application(s) by number" -ForegroundColor Cyan
+    Write-Host "   [3] Install essential pack" -ForegroundColor Magenta
+    Write-Host "   [4] Exit" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host "  Examples: 1,2,3  or  5  or  1,2,3,9,15  or  1 2 3 9 15 (spaces ok)" -ForegroundColor Gray
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host "                         Developed by: KARIM ABU RIDA" -ForegroundColor Yellow
+    Write-Host "================================================================================" -ForegroundColor Cyan
 }
 
 # Main loop
@@ -186,22 +212,17 @@ do {
         "2" {
             Show-AppsList
             Write-Host ""
-            Write-Host "Examples: 1,2,3  or  5  or  1,3,5,7" -ForegroundColor Gray
-            $numbers = Read-Host "Enter numbers (comma separated)"
+            Write-Host "You can write numbers separated by commas or spaces" -ForegroundColor Gray
+            Write-Host "Examples: 1,2,3  or  1 2 3  or  1,2,3,9,15" -ForegroundColor Gray
+            Write-Host ""
+            $input = Read-Host "Enter numbers"
             
-            $selectedNumbers = @()
-            $numArray = $numbers -split ","
-            foreach ($num in $numArray) {
-                $n = [int]$num.Trim()
-                if ($n -ge 1 -and $n -le $AppsList.Count) {
-                    $selectedNumbers += $n
-                }
-            }
+            $selectedNumbers = Parse-Numbers -InputString $input
             
             if ($selectedNumbers.Count -gt 0) {
                 Install-ByNumbers -SelectedNumbers $selectedNumbers
             } else {
-                Write-Host "Invalid numbers entered!" -ForegroundColor Red
+                Write-Host "No valid numbers entered!" -ForegroundColor Red
             }
             Read-Host "Press Enter to continue"
         }
