@@ -1,6 +1,6 @@
 #===============================================================================
 # KARIM ABU RIDA - All-in-One Windows Manager
-# Version: 5.8
+# Version: 5.9
 # Tools: System Info + Winget Manager + App Scanner/Installer + IDM Activation
 # GitHub: MARKETTV1
 #===============================================================================
@@ -380,6 +380,8 @@ $AppsList = @(
                Url="https://github.com/mrgoonie/winshot/releases/download/v1.6.0/winshot.exe"; SilentArg="/S"}
     @{Num=78; Name="Neat Download Manager";  Id="custom"; Type="custom";
                Url="https://neatdownloadmanager.com/file/NeatDM_setup.exe"; SilentArg="/S"}
+    @{Num=79; Name="Screenpresso";           Id="custom"; Type="custom";
+               Url="https://www.screenpresso.com/binaries/releases/stable/dotnet47/Screenpresso.exe"; SilentArg="/S"}
 )
 
 #===============================================================================
@@ -680,6 +682,9 @@ function Scan-InstalledApps {
             if ($app.Name -eq "Neat Download Manager") {
                 $p = "$env:ProgramFiles\NeatDM\NeatDM.exe"
             }
+            if ($app.Name -eq "Screenpresso") {
+                $p = "$env:ProgramFiles\Screenpresso\Screenpresso.exe"
+            }
             if (Test-Path $p) {
                 $v = (Get-Item $p).VersionInfo.FileVersion
                 $results += [PSCustomObject]@{ Num=$app.Num; Name=$app.Name; Current=if($v){$v}else{"Installed"}; Latest="Latest" }
@@ -801,7 +806,7 @@ function Show-MainMenu {
     Clear-Host
     Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "              All-in-One Windows Manager v5.8 - by KARIM ABU RIDA" -ForegroundColor White
+    Write-Host "              All-in-One Windows Manager v5.9 - by KARIM ABU RIDA" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "   ── WINGET MANAGER ─────────────────────────────────────────────" -ForegroundColor DarkGray
@@ -809,7 +814,7 @@ function Show-MainMenu {
     Write-Host "   [2] Check for updates and update selectively" -ForegroundColor Green
     Write-Host ""
     Write-Host "   ── APP SCANNER & INSTALLER ──────────────────────────────────" -ForegroundColor DarkGray
-    Write-Host "   [3] Show available apps list (78 apps)" -ForegroundColor Cyan
+    Write-Host "   [3] Show available apps list (79 apps)" -ForegroundColor Cyan
     Write-Host "   [4] Scan and show installed apps with versions" -ForegroundColor Cyan
     Write-Host "   [5] Install apps directly by number" -ForegroundColor Cyan
     Write-Host ""
