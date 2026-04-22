@@ -1,6 +1,6 @@
 #===============================================================================
 # KARIM ABU RIDA - All-in-One Windows Manager
-# Version: 6.0
+# Version: 6.1
 # Tools: System Info + Winget Manager + App Scanner/Installer + Activation Tools
 # GitHub: MARKETTV1
 #===============================================================================
@@ -105,6 +105,20 @@ function Test-InternetConnection {
     }
 }
 
+# ✅ الوظيفة الصحيحة للكشف عن العمارة
+function Get-SystemArchitecture {
+    $arch = $env:PROCESSOR_ARCHITECTURE
+    if ($arch -eq "AMD64") { return "x64 (64-bit)" }
+    if ($arch -eq "ARM64") { return "ARM64 (64-bit)" }
+    if ($arch -eq "x86") {
+        if ([Environment]::Is64BitOperatingSystem) {
+            return "x64 (64-bit) [PowerShell x86 mode]"
+        }
+        return "x86 (32-bit)"
+    }
+    return $arch
+}
+
 function Show-SystemInfo {
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                         SYSTEM INFORMATION DASHBOARD" -ForegroundColor White
@@ -129,6 +143,9 @@ function Show-SystemInfo {
     Write-Host "  Windows Edition      : " -NoNewline -ForegroundColor Yellow
     Write-Host "$winEdition" -ForegroundColor White
 
+    # ✅ استخدام الوظيفة الصحيحة للعمارة
+    Write-Host "  Architecture         : " -NoNewline -ForegroundColor Yellow
+    Write-Host "$(Get-SystemArchitecture)" -ForegroundColor White
 
     $cpu = (Get-CimInstance -ClassName Win32_Processor -ErrorAction SilentlyContinue).Name
     if ($cpu -and $cpu.Length -gt 50) { $cpu = $cpu.Substring(0,47) + "..." }
@@ -160,23 +177,10 @@ function Show-SystemInfo {
         Write-Host "  Activation Status    : " -NoNewline -ForegroundColor Yellow
         Write-Host "Unable to determine" -ForegroundColor Gray
     }
-    function Get-SystemArchitecture {
-    $arch = $env:PROCESSOR_ARCHITECTURE
-    if ($arch -eq "AMD64") { return "x64 (64-bit)" }
-    if ($arch -eq "ARM64") { return "ARM64 (64-bit)" }
-    if ($arch -eq "x86") {
-        # تحقق مما إذا كان يعمل في وضع WOW64 (32-bit على 64-bit)
-        if ([Environment]::Is64BitOperatingSystem) {
-            return "x64 (64-bit) - PowerShell running in 32-bit mode"
-        }
-        return "x86 (32-bit)"
-    }
-    return $arch
-}
+
     Write-Host ""
     Write-Host "────────────────────────────────────────────────────────────────────────────────" -ForegroundColor DarkGray
 
-    # ✅ استخدام الوظيفة الجديدة بدلاً من ping
     $internetConnected = Test-InternetConnection
     Write-Host "  Internet Connection  : " -NoNewline -ForegroundColor Yellow
     if ($internetConnected) { Write-Host "CONNECTED" -ForegroundColor Green } else { Write-Host "DISCONNECTED" -ForegroundColor Red }
@@ -734,7 +738,7 @@ function Run-ActivationMenu {
 function Show-MainMenu {
     Clear-Host; Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "              All-in-One Windows Manager v6.0 - by KARIM ABU RIDA" -ForegroundColor White
+    Write-Host "              All-in-One Windows Manager v6.1 - by KARIM ABU RIDA" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "   ── WINGET MANAGER ─────────────────────────────────────────────" -ForegroundColor DarkGray
