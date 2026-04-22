@@ -1,6 +1,6 @@
 #===============================================================================
 # KARIM ABU RIDA - All-in-One Windows Manager
-# Version: 5.9
+# Version: 6.0
 # Tools: System Info + Winget Manager + App Scanner/Installer + Activation Tools
 # GitHub: MARKETTV1
 #===============================================================================
@@ -81,14 +81,41 @@ function Get-NetworkAdapter {
     } catch { return "Unable to retrieve" }
 }
 
+# ✅ الوظيفة الجديدة للكشف عن الإنترنت (بدون ping)
+function Test-InternetConnection {
+    try {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        $request = [System.Net.WebRequest]::Create("https://www.google.com")
+        $request.Timeout = 3000
+        $request.Method = "HEAD"
+        $response = $request.GetResponse()
+        $response.Close()
+        return $true
+    } catch {
+        try {
+            $request = [System.Net.WebRequest]::Create("http://www.microsoft.com")
+            $request.Timeout = 3000
+            $request.Method = "HEAD"
+            $response = $request.GetResponse()
+            $response.Close()
+            return $true
+        } catch {
+            return $false
+        }
+    }
+}
+
 function Show-SystemInfo {
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                         SYSTEM INFORMATION DASHBOARD" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
 
-    Write-Host "  Computer Name        : " -NoNewline -ForegroundColor Yellow; Write-Host "$env:COMPUTERNAME" -ForegroundColor White
-    Write-Host "  Current User         : " -NoNewline -ForegroundColor Yellow; Write-Host "$env:USERNAME" -ForegroundColor White
+    Write-Host "  Computer Name        : " -NoNewline -ForegroundColor Yellow
+    Write-Host "$env:COMPUTERNAME" -ForegroundColor White
+
+    Write-Host "  Current User         : " -NoNewline -ForegroundColor Yellow
+    Write-Host "$env:USERNAME" -ForegroundColor White
 
     $winInfo = Get-CorrectWindowsVersion
     Write-Host "  Windows Version      : " -NoNewline -ForegroundColor Yellow
@@ -99,8 +126,11 @@ function Show-SystemInfo {
     }
 
     $winEdition = (Get-ItemProperty "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name EditionID -ErrorAction SilentlyContinue).EditionID
-    Write-Host "  Windows Edition      : " -NoNewline -ForegroundColor Yellow; Write-Host "$winEdition" -ForegroundColor White
-    Write-Host "  Architecture         : " -NoNewline -ForegroundColor Yellow; Write-Host "$env:PROCESSOR_ARCHITECTURE" -ForegroundColor White
+    Write-Host "  Windows Edition      : " -NoNewline -ForegroundColor Yellow
+    Write-Host "$winEdition" -ForegroundColor White
+
+    Write-Host "  Architecture         : " -NoNewline -ForegroundColor Yellow
+    Write-Host "$env:PROCESSOR_ARCHITECTURE" -ForegroundColor White
 
     $cpu = (Get-CimInstance -ClassName Win32_Processor -ErrorAction SilentlyContinue).Name
     if ($cpu -and $cpu.Length -gt 50) { $cpu = $cpu.Substring(0,47) + "..." }
@@ -119,7 +149,8 @@ function Show-SystemInfo {
         Write-Host "  Disk (C:)            : " -NoNewline -ForegroundColor Yellow
         Write-Host "$free GB free / $total GB total ($pct% free)" -ForegroundColor White
     } catch {
-        Write-Host "  Disk (C:)            : " -NoNewline -ForegroundColor Yellow; Write-Host "Unable to retrieve" -ForegroundColor Gray
+        Write-Host "  Disk (C:)            : " -NoNewline -ForegroundColor Yellow
+        Write-Host "Unable to retrieve" -ForegroundColor Gray
     }
 
     try {
@@ -128,36 +159,39 @@ function Show-SystemInfo {
         Write-Host "  Activation Status    : " -NoNewline -ForegroundColor Yellow
         if ($act -eq 1) { Write-Host "ACTIVATED" -ForegroundColor Green } else { Write-Host "NOT ACTIVATED" -ForegroundColor Red }
     } catch {
-        Write-Host "  Activation Status    : " -NoNewline -ForegroundColor Yellow; Write-Host "Unable to determine" -ForegroundColor Gray
+        Write-Host "  Activation Status    : " -NoNewline -ForegroundColor Yellow
+        Write-Host "Unable to determine" -ForegroundColor Gray
     }
 
     Write-Host ""
     Write-Host "────────────────────────────────────────────────────────────────────────────────" -ForegroundColor DarkGray
 
-    $internetConnected = $false
-    try {
-        $internetConnected = Test-Connection -ComputerName "8.8.8.8" -Count 1 -Quiet -ErrorAction Stop -TimeoutSeconds 2
-        Write-Host "  Internet Connection  : " -NoNewline -ForegroundColor Yellow
-        if ($internetConnected) { Write-Host "CONNECTED" -ForegroundColor Green } else { Write-Host "DISCONNECTED" -ForegroundColor Red }
-    } catch {
-        Write-Host "  Internet Connection  : " -NoNewline -ForegroundColor Yellow; Write-Host "DISCONNECTED" -ForegroundColor Red
-    }
+    # ✅ استخدام الوظيفة الجديدة بدلاً من ping
+    $internetConnected = Test-InternetConnection
+    Write-Host "  Internet Connection  : " -NoNewline -ForegroundColor Yellow
+    if ($internetConnected) { Write-Host "CONNECTED" -ForegroundColor Green } else { Write-Host "DISCONNECTED" -ForegroundColor Red }
 
-    Write-Host "  Local IP Address     : " -NoNewline -ForegroundColor Yellow; Write-Host "$(Get-LocalIP)" -ForegroundColor White
+    Write-Host "  Local IP Address     : " -NoNewline -ForegroundColor Yellow
+    Write-Host "$(Get-LocalIP)" -ForegroundColor White
 
     if ($internetConnected) {
         $pub = Get-PublicIP
         Write-Host "  Public IP Address    : " -NoNewline -ForegroundColor Yellow
         Write-Host "$pub" -ForegroundColor $(if($pub -eq "Not connected"){"Gray"}else{"White"})
     } else {
-        Write-Host "  Public IP Address    : " -NoNewline -ForegroundColor Yellow; Write-Host "Not connected" -ForegroundColor Gray
+        Write-Host "  Public IP Address    : " -NoNewline -ForegroundColor Yellow
+        Write-Host "Not connected" -ForegroundColor Gray
     }
 
-    Write-Host "  Network Adapter      : " -NoNewline -ForegroundColor Yellow; Write-Host "$(Get-NetworkAdapter)" -ForegroundColor White
+    Write-Host "  Network Adapter      : " -NoNewline -ForegroundColor Yellow
+    Write-Host "$(Get-NetworkAdapter)" -ForegroundColor White
 
     try {
         $gw = (Get-NetRoute -DestinationPrefix "0.0.0.0/0" -ErrorAction SilentlyContinue | Select-Object -First 1).NextHop
-        if ($gw) { Write-Host "  Default Gateway      : " -NoNewline -ForegroundColor Yellow; Write-Host "$gw" -ForegroundColor White }
+        if ($gw) { 
+            Write-Host "  Default Gateway      : " -NoNewline -ForegroundColor Yellow
+            Write-Host "$gw" -ForegroundColor White
+        }
     } catch {}
 
     Write-Host ""
@@ -166,8 +200,10 @@ function Show-SystemInfo {
     $lastBoot = (Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue).LastBootUpTime
     if ($lastBoot) {
         $up = (Get-Date) - $lastBoot
-        Write-Host "  Last Boot            : " -NoNewline -ForegroundColor Yellow; Write-Host "$lastBoot" -ForegroundColor White
-        Write-Host "  System Uptime        : " -NoNewline -ForegroundColor Yellow; Write-Host "$($up.Days)d $($up.Hours)h $($up.Minutes)m" -ForegroundColor White
+        Write-Host "  Last Boot            : " -NoNewline -ForegroundColor Yellow
+        Write-Host "$lastBoot" -ForegroundColor White
+        Write-Host "  System Uptime        : " -NoNewline -ForegroundColor Yellow
+        Write-Host "$($up.Days)d $($up.Hours)h $($up.Minutes)m" -ForegroundColor White
     }
 
     Write-Host ""
@@ -176,7 +212,9 @@ function Show-SystemInfo {
     $wingetVer = winget --version 2>$null
     Write-Host "  Winget Version       : " -NoNewline -ForegroundColor Yellow
     Write-Host "$(if($wingetVer){$wingetVer}else{'NOT INSTALLED'})" -ForegroundColor $(if($wingetVer){"White"}else{"Red"})
-    Write-Host "  PowerShell Version   : " -NoNewline -ForegroundColor Yellow; Write-Host "$($PSVersionTable.PSVersion)" -ForegroundColor White
+
+    Write-Host "  PowerShell Version   : " -NoNewline -ForegroundColor Yellow
+    Write-Host "$($PSVersionTable.PSVersion)" -ForegroundColor White
 
     Write-Host ""
     Write-Host "================================================================================" -ForegroundColor Cyan
@@ -184,7 +222,7 @@ function Show-SystemInfo {
 }
 
 #===============================================================================
-# APPS LIST
+# APPS LIST (Winget + Custom)
 #===============================================================================
 $AppsList = @(
     @{Num=1;  Name="Google Chrome";          Id="Google.Chrome";                          Type="winget"}
@@ -596,7 +634,7 @@ function Install-ByNumbers {
 }
 
 #===============================================================================
-# MODULE 3 — ACTIVATION TOOLS (Windows MAS + IDM IAS)
+# MODULE 3 — ACTIVATION TOOLS
 #===============================================================================
 function Run-ActivationMenu {
     Clear-Host; Show-Signature
@@ -686,7 +724,7 @@ function Run-ActivationMenu {
 function Show-MainMenu {
     Clear-Host; Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "              All-in-One Windows Manager v5.9 - by KARIM ABU RIDA" -ForegroundColor White
+    Write-Host "              All-in-One Windows Manager v6.0 - by KARIM ABU RIDA" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "   ── WINGET MANAGER ─────────────────────────────────────────────" -ForegroundColor DarkGray
