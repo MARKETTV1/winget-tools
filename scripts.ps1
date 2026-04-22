@@ -1,6 +1,6 @@
 #===============================================================================
 # KARIM ABU RIDA - All-in-One Windows Manager
-# Version: 5.7
+# Version: 5.8
 # Tools: System Info + Winget Manager + App Scanner/Installer + IDM Activation
 # GitHub: MARKETTV1
 #===============================================================================
@@ -11,7 +11,7 @@ function Show-Signature {
     Write-Host "                                                                  " -ForegroundColor DarkGray
     Write-Host "   ██╗  ██╗ █████╗ ██████╗ ██╗███╗   ███╗    █████╗  ██████╗ ██╗   ██╗    ██████╗ ██╗██████╗  █████╗ " -ForegroundColor Cyan
     Write-Host "   ██║ ██╔╝██╔══██╗██╔══██╗██║████╗ ████║    ██╔══██╗██╔══██╗██║   ██║    ██╔══██╗██║██╔══██╗██╔══██╗" -ForegroundColor Cyan
-    Write-Host "   █████╔╝ ███████║██████╔╝██║██╔████╔██║    ██████╔╝██████ ║██║   ██║    ██████╔╝██║██║  ██║███████║" -ForegroundColor Cyan
+    Write-Host "   █████╔╝ ███████║██████╔╝██║██╔████╔██║    ██████╔╝██║  ██║██║   ██║    ██████╔╝██║██║  ██║███████║" -ForegroundColor Cyan
     Write-Host "   ██╔═██╗ ██╔══██║██╔══██╗██║██║╚██╔╝██║    ██╔══██╗██║  ██║██║   ██║    ██╔══██╗██║██║  ██║██╔══██║" -ForegroundColor Cyan
     Write-Host "   ██║  ██╗██║  ██║██║  ██║██║██║ ╚═╝ ██║    ██║  ██║██████╔╝╚██████╔╝    ██║  ██║██║██████╔╝██║  ██║" -ForegroundColor Cyan
     Write-Host "   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝    ╚═╝  ╚═╝╚═════╝  ╚═════╝     ╚═╝  ╚═╝╚═╝╚═════╝ ╚═╝  ╚═╝" -ForegroundColor Cyan
@@ -508,49 +508,61 @@ function Update-Selective {
     Write-Host ""; Write-Host "Checking for updates..." -ForegroundColor Yellow; Write-Host ""
 
     $upgradeOutput = winget upgrade --accept-source-agreements 2>$null
-    $uList = @()
-    $found = $false
-    $invalidPatterns = @("Version", "Available", "Source", "Name", "Id", "^$")
+    $lines = $upgradeOutput -split "`n"
     
-    foreach ($line in ($upgradeOutput -split "`n")) {
-        if ($line -match "^-+---") { $found = $true; continue }
-        if ($found -and $line.Trim() -ne "") {
-            $p = $line -split '\s{2,}'
-            # التحقق من صحة السطر
-            if ($p.Count -ge 4 -and $p[0] -match "[a-zA-Z0-9\.\-]+") {
+    # البحث عن بداية الجدول
+    $startRecording = $false
+    $validApps = @()
+    
+    foreach ($line in $lines) {
+        # تخطي حتى نصل إلى الخط الفاصل
+        if ($line -match "^-+---") {
+            $startRecording = $true
+            continue
+        }
+        
+        if ($startRecording -and $line.Trim() -ne "") {
+            $parts = $line -split '\s{2,}'
+            # يجب أن يحتوي السطر على 4 أجزاء على الأقل
+            if ($parts.Count -ge 4) {
+                $id = $parts[0].Trim()
+                $name = $parts[1].Trim()
+                $currentVer = $parts[2].Trim()
+                $availableVer = $parts[3].Trim()
+                
+                # التحقق من صحة التطبيق
                 $isValid = $true
-                $appName = $p[1].Trim()
-                $appId = $p[0].Trim()
                 
                 # تجاهل التطبيقات غير الصالحة
-                if ($appId -eq "Id" -or $appName -eq "Id") { $isValid = $false }
-                if ($appName -match "Version|Available|Source") { $isValid = $false }
-                if ($appId -match "Version|Available|Source") { $isValid = $false }
-                if ([string]::IsNullOrWhiteSpace($appName)) { $isValid = $false }
-                if ($appName.Length -lt 2) { $isValid = $false }
+                if ($id -eq "Id" -or $name -eq "Id") { $isValid = $false }
+                if ($name -match "^(Version|Available|Source|Name)$") { $isValid = $false }
+                if ($id -match "^(Version|Available|Source|Name)$") { $isValid = $false }
+                if ([string]::IsNullOrWhiteSpace($name)) { $isValid = $false }
+                if ($name.Length -lt 2) { $isValid = $false }
+                if ($availableVer -eq "Available" -or $availableVer -eq "Source") { $isValid = $false }
                 
                 if ($isValid) {
-                    $uList += [PSCustomObject]@{ 
-                        Id = $appId
-                        Name = $appName
-                        Current = $p[2].Trim()
-                        Available = $p[3].Trim()
+                    $validApps += [PSCustomObject]@{
+                        Id = $id
+                        Name = $name
+                        Current = $currentVer
+                        Available = $availableVer
                     }
                 }
             }
         }
     }
 
-    if ($uList.Count -eq 0) {
+    if ($validApps.Count -eq 0) {
         Write-Host "No updates available!" -ForegroundColor Green
         Write-Host ""; Read-Host "Press Enter to return"; return
     }
 
     Write-Host "Available updates:" -ForegroundColor Green; Write-Host ""
-    for ($i=0; $i -lt $uList.Count; $i++) {
+    for ($i=0; $i -lt $validApps.Count; $i++) {
         Write-Host "[$($i+1)] " -NoNewline -ForegroundColor Cyan
-        Write-Host "$($uList[$i].Name) " -NoNewline -ForegroundColor White
-        Write-Host "($($uList[$i].Current) -> $($uList[$i].Available))" -ForegroundColor Yellow
+        Write-Host "$($validApps[$i].Name) " -NoNewline -ForegroundColor White
+        Write-Host "($($validApps[$i].Current) -> $($validApps[$i].Available))" -ForegroundColor Yellow
     }
 
     Write-Host ""
@@ -560,14 +572,14 @@ function Update-Selective {
     if ($userInput -eq "0") { return }
 
     $toUpdate = @()
-    if ($userInput -eq "all") { $toUpdate = $uList }
+    if ($userInput -eq "all") { $toUpdate = $validApps }
     else {
         foreach ($n in ($userInput -split ",")) {
             $n = $n.Trim()
             if ($n -match "^\d+$") {
                 $idx = [int]$n - 1
-                if ($idx -ge 0 -and $idx -lt $uList.Count) { 
-                    $toUpdate += $uList[$idx] 
+                if ($idx -ge 0 -and $idx -lt $validApps.Count) { 
+                    $toUpdate += $validApps[$idx] 
                 }
             }
         }
@@ -598,19 +610,16 @@ function Update-Selective {
     
     foreach ($app in $toUpdate) {
         Write-Host ">>> Updating $($app.Name)..." -ForegroundColor Cyan
-        
-        # محاولة التحديث باستخدام winget
         winget upgrade $app.Id --accept-package-agreements --accept-source-agreements --silent 2>&1
         
         if ($LASTEXITCODE -eq 0) { 
             Write-Host "[OK] $($app.Name) updated successfully!" -ForegroundColor Green
             $successCount++
         } elseif ($LASTEXITCODE -eq 1 -or $LASTEXITCODE -eq -1978335189) {
-            Write-Host "[INFO] $($app.Name) is already up to date or not found" -ForegroundColor Yellow
+            Write-Host "[INFO] $($app.Name) is already up to date" -ForegroundColor Yellow
             $successCount++
         } else {
             Write-Host "[FAIL] Failed to update $($app.Name) (Error: $LASTEXITCODE)" -ForegroundColor Red
-            Write-Host "       Try updating manually using: winget upgrade `"$($app.Id)`"" -ForegroundColor Gray
             $failCount++
         }
         Write-Host ""
@@ -792,7 +801,7 @@ function Show-MainMenu {
     Clear-Host
     Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "              All-in-One Windows Manager v5.7 - by KARIM ABU RIDA" -ForegroundColor White
+    Write-Host "              All-in-One Windows Manager v5.8 - by KARIM ABU RIDA" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "   ── WINGET MANAGER ─────────────────────────────────────────────" -ForegroundColor DarkGray
