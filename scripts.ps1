@@ -1,6 +1,6 @@
 #===============================================================================
 # KARIM ABU RIDA - All-in-One Windows Manager
-# Version: 5.6
+# Version: 5.7
 # Tools: System Info + Winget Manager + App Scanner/Installer + IDM Activation
 # GitHub: MARKETTV1
 #===============================================================================
@@ -11,7 +11,7 @@ function Show-Signature {
     Write-Host "                                                                  " -ForegroundColor DarkGray
     Write-Host "   ██╗  ██╗ █████╗ ██████╗ ██╗███╗   ███╗    █████╗  ██████╗ ██╗   ██╗    ██████╗ ██╗██████╗  █████╗ " -ForegroundColor Cyan
     Write-Host "   ██║ ██╔╝██╔══██╗██╔══██╗██║████╗ ████║    ██╔══██╗██╔══██╗██║   ██║    ██╔══██╗██║██╔══██╗██╔══██╗" -ForegroundColor Cyan
-    Write-Host "   █████╔╝ ███████║██████╔╝██║██╔████╔██║    ██████╔╝██║██  ║██║   ██║    ██████╔╝██║██║  ██║███████║" -ForegroundColor Cyan
+    Write-Host "   █████╔╝ ███████║██████╔╝██║██╔████╔██║    ██████╔╝██████ ║██║   ██║    ██████╔╝██║██║  ██║███████║" -ForegroundColor Cyan
     Write-Host "   ██╔═██╗ ██╔══██║██╔══██╗██║██║╚██╔╝██║    ██╔══██╗██║  ██║██║   ██║    ██╔══██╗██║██║  ██║██╔══██║" -ForegroundColor Cyan
     Write-Host "   ██║  ██╗██║  ██║██║  ██║██║██║ ╚═╝ ██║    ██║  ██║██████╔╝╚██████╔╝    ██║  ██║██║██████╔╝██║  ██║" -ForegroundColor Cyan
     Write-Host "   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝    ╚═╝  ╚═╝╚═════╝  ╚═════╝     ╚═╝  ╚═╝╚═╝╚═════╝ ╚═╝  ╚═╝" -ForegroundColor Cyan
@@ -508,18 +508,34 @@ function Update-Selective {
     Write-Host ""; Write-Host "Checking for updates..." -ForegroundColor Yellow; Write-Host ""
 
     $upgradeOutput = winget upgrade --accept-source-agreements 2>$null
-    $uList = @(); $found = $false
+    $uList = @()
+    $found = $false
+    $invalidPatterns = @("Version", "Available", "Source", "Name", "Id", "^$")
+    
     foreach ($line in ($upgradeOutput -split "`n")) {
         if ($line -match "^-+---") { $found = $true; continue }
         if ($found -and $line.Trim() -ne "") {
             $p = $line -split '\s{2,}'
-            # تحسين: تحقق من وجود اسم ومعرف صحيحين
-            if ($p.Count -ge 4 -and $p[0] -match "[a-zA-Z0-9\.\-]+" -and $p[0] -ne "Id" -and $p[1] -notmatch "Version|Available") {
-                $uList += [PSCustomObject]@{ 
-                    Id = $p[0].Trim(); 
-                    Name = $p[1].Trim(); 
-                    Current = $p[2].Trim(); 
-                    Available = $p[3].Trim() 
+            # التحقق من صحة السطر
+            if ($p.Count -ge 4 -and $p[0] -match "[a-zA-Z0-9\.\-]+") {
+                $isValid = $true
+                $appName = $p[1].Trim()
+                $appId = $p[0].Trim()
+                
+                # تجاهل التطبيقات غير الصالحة
+                if ($appId -eq "Id" -or $appName -eq "Id") { $isValid = $false }
+                if ($appName -match "Version|Available|Source") { $isValid = $false }
+                if ($appId -match "Version|Available|Source") { $isValid = $false }
+                if ([string]::IsNullOrWhiteSpace($appName)) { $isValid = $false }
+                if ($appName.Length -lt 2) { $isValid = $false }
+                
+                if ($isValid) {
+                    $uList += [PSCustomObject]@{ 
+                        Id = $appId
+                        Name = $appName
+                        Current = $p[2].Trim()
+                        Available = $p[3].Trim()
+                    }
                 }
             }
         }
@@ -584,7 +600,7 @@ function Update-Selective {
         Write-Host ">>> Updating $($app.Name)..." -ForegroundColor Cyan
         
         # محاولة التحديث باستخدام winget
-        $result = winget upgrade $app.Id --accept-package-agreements --accept-source-agreements --silent 2>&1
+        winget upgrade $app.Id --accept-package-agreements --accept-source-agreements --silent 2>&1
         
         if ($LASTEXITCODE -eq 0) { 
             Write-Host "[OK] $($app.Name) updated successfully!" -ForegroundColor Green
@@ -776,7 +792,7 @@ function Show-MainMenu {
     Clear-Host
     Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "              All-in-One Windows Manager v5.6 - by KARIM ABU RIDA" -ForegroundColor White
+    Write-Host "              All-in-One Windows Manager v5.7 - by KARIM ABU RIDA" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "   ── WINGET MANAGER ─────────────────────────────────────────────" -ForegroundColor DarkGray
