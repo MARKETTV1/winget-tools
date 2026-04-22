@@ -1,24 +1,32 @@
 #===============================================================================
 # KARIM ABU RIDA - All-in-One Windows Manager
-# Version: 5.5
-# Tools: System Info + Winget Manager + App Scanner/Installer + Activation Tools
+# Version: 5.6
+# Tools: System Info + Winget Manager + App Scanner/Installer + IDM Activation
 # GitHub: MARKETTV1
 #===============================================================================
 
 Clear-Host
 
 function Show-Signature {
-    Write-Host "                                                                  " -ForegroundColor DarkGray
-    Write-Host "   ██╗  ██╗ █████╗ ██████╗ ██╗███╗   ███╗    █████╗ ██████╗ ██╗   ██╗    ██████╗ ██╗██████╗  █████╗ " -ForegroundColor Cyan
-    Write-Host "   ██║ ██╔╝██╔══██╗██╔══██╗██║████╗ ████║    ██╔══██╗██╔══██╗██║   ██║    ██╔══██╗██║██╔══██╗██╔══██╗" -ForegroundColor Cyan
-    Write-Host "   █████╔╝ ███████║██████╔╝██║██╔████╔██║    ██████╔╝██║████║██║   ██║    ██████╔╝██║██║  ██║███████║" -ForegroundColor Cyan
-    Write-Host "   ██╔═██╗ ██╔══██║██╔══██╗██║██║╚██╔╝██║    ██╔══██╗██║  ██║██║   ██║    ██╔══██╗██║██║  ██║██╔══██║" -ForegroundColor Cyan
-    Write-Host "   ██║  ██╗██║  ██║██║  ██║██║██║ ╚═╝ ██║    ██║  ██║██████╔╝╚██████╔╝    ██║  ██║██║██████╔╝██║  ██║" -ForegroundColor Cyan
-    Write-Host "   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝    ╚═╝  ╚═╝╚═════╝  ╚═════╝     ╚═╝  ╚═╝╚═╝╚═════╝ ╚═╝  ╚═╝" -ForegroundColor Cyan
-    Write-Host "                                                                  " -ForegroundColor DarkGray
-    Write-Host "                              Created by: KARIM ABU RIDA           " -ForegroundColor Yellow
-    Write-Host "                              GitHub: MARKETTV1                    " -ForegroundColor Yellow
-    Write-Host "                                                                  " -ForegroundColor DarkGray
+    Write-Host ""
+    Write-Host "  ╔══════════════════════════════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
+    Write-Host "  ║                                                                                          ║" -ForegroundColor Cyan
+    Write-Host "  ║    ██╗  ██╗ █████╗ ██████╗ ██╗███╗   ███╗    █████╗ ██████╗ ██╗   ██╗                     ║" -ForegroundColor Cyan
+    Write-Host "  ║    ██║ ██╔╝██╔══██╗██╔══██╗██║████╗ ████║    ██╔══██╗██╔══██╗██║   ██║                     ║" -ForegroundColor Cyan
+    Write-Host "  ║    █████╔╝ ███████║██████╔╝██║██╔████╔██║    ██████╔╝██║  ██║██║   ██║                     ║" -ForegroundColor Cyan
+    Write-Host "  ║    ██╔═██╗ ██╔══██║██╔══██╗██║██║╚██╔╝██║    ██╔══██╗██║  ██║██║   ██║                     ║" -ForegroundColor Cyan
+    Write-Host "  ║    ██║  ██╗██║  ██║██║  ██║██║██║ ╚═╝ ██║    ██║  ██║██████╔╝╚██████╔╝                     ║" -ForegroundColor Cyan
+    Write-Host "  ║    ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝    ╚═╝  ╚═╝╚═════╝  ╚═════╝                      ║" -ForegroundColor Cyan
+    Write-Host "  ║                                                                                          ║" -ForegroundColor Cyan
+    Write-Host "  ║                                    ALL-IN-ONE WINDOWS MANAGER                            ║" -ForegroundColor White
+    Write-Host "  ║                                                                                          ║" -ForegroundColor Cyan
+    Write-Host "  ║                         ╔══════════════════════════════════════════════╗                 ║" -ForegroundColor Yellow
+    Write-Host "  ║                         ║           KARIM ABU RIDA                      ║                 ║" -ForegroundColor Yellow
+    Write-Host "  ║                         ║           GitHub: MARKETTV1                   ║                 ║" -ForegroundColor Yellow
+    Write-Host "  ║                         ╚══════════════════════════════════════════════╝                 ║" -ForegroundColor Yellow
+    Write-Host "  ║                                                                                          ║" -ForegroundColor Cyan
+    Write-Host "  ╚══════════════════════════════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+    Write-Host ""
 }
 
 #===============================================================================
@@ -26,46 +34,75 @@ function Show-Signature {
 #===============================================================================
 function Get-CorrectWindowsVersion {
     $regPath = "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion"
+    
     $build = (Get-ItemProperty -Path $regPath -Name CurrentBuild -ErrorAction SilentlyContinue).CurrentBuild
     $buildInt = [int]$build
+    
     $productName = (Get-ItemProperty -Path $regPath -Name ProductName -ErrorAction SilentlyContinue).ProductName
     $displayVersion = (Get-ItemProperty -Path $regPath -Name DisplayVersion -ErrorAction SilentlyContinue).DisplayVersion
     $releaseId = (Get-ItemProperty -Path $regPath -Name ReleaseId -ErrorAction SilentlyContinue).ReleaseId
-
+    
     if ($buildInt -ge 22000) {
+        $windowsName = "Windows 11"
         $edition = $productName -replace "Windows 10 ", "" -replace "Windows 11 ", ""
         $finalName = "Windows 11 $edition"
     } elseif ($buildInt -ge 10240) {
+        $windowsName = "Windows 10"
         $edition = $productName -replace "Windows 10 ", ""
         $finalName = "Windows 10 $edition"
-    } elseif ($buildInt -ge 9200) { $finalName = "Windows 8.1" }
-    elseif ($buildInt -ge 7600) { $finalName = "Windows 7" }
-    else { $finalName = $productName }
-
-    $versionFriendly = if ($displayVersion) { $displayVersion } elseif ($releaseId) { $releaseId } else { "" }
-    return @{ FullName=$finalName; Build=$buildInt; VersionFriendly=$versionFriendly }
+    } elseif ($buildInt -ge 9200) {
+        $finalName = "Windows 8.1"
+    } elseif ($buildInt -ge 7600) {
+        $finalName = "Windows 7"
+    } else {
+        $finalName = $productName
+    }
+    
+    $versionFriendly = ""
+    if ($displayVersion) {
+        $versionFriendly = $displayVersion
+    } elseif ($releaseId) {
+        $versionFriendly = $releaseId
+    }
+    
+    return @{
+        FullName = $finalName
+        Build = $buildInt
+        VersionFriendly = $versionFriendly
+    }
 }
 
 function Get-LocalIP {
     try {
-        $ip = (Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue |
-               Where-Object { $_.InterfaceAlias -notlike "*Loopback*" -and $_.PrefixOrigin -ne "WellKnown" } |
+        $ip = (Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue | 
+               Where-Object { $_.InterfaceAlias -notlike "*Loopback*" -and $_.PrefixOrigin -ne "WellKnown" } | 
                Select-Object -First 1).IPAddress
+        if (-not $ip) {
+            $ip = (Test-Connection -ComputerName $env:COMPUTERNAME -Count 1 -ErrorAction SilentlyContinue).IPV4Address.IPAddressToString
+        }
         if (-not $ip) { $ip = "Unable to retrieve" }
         return $ip
-    } catch { return "Unable to retrieve" }
+    } catch {
+        return "Unable to retrieve"
+    }
 }
 
 function Get-PublicIP {
     try {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         $publicIP = (Invoke-WebRequest -Uri "https://api.ipify.org" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop).Content
-        if ($publicIP -match '^\d+\.\d+\.\d+\.\d+$') { return $publicIP }
+        if ($publicIP -match '^\d+\.\d+\.\d+\.\d+$') {
+            return $publicIP
+        }
     } catch {}
+    
     try {
         $publicIP = (Invoke-WebRequest -Uri "https://icanhazip.com" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop).Content.Trim()
-        if ($publicIP -match '^\d+\.\d+\.\d+\.\d+$') { return $publicIP }
+        if ($publicIP -match '^\d+\.\d+\.\d+\.\d+$') {
+            return $publicIP
+        }
     } catch {}
+    
     return "Not connected"
 }
 
@@ -73,12 +110,14 @@ function Get-NetworkAdapter {
     try {
         $adapter = Get-NetAdapter -Physical -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq "Up" } | Select-Object -First 1
         if ($adapter) {
-            $n = $adapter.Name
-            if ($n.Length -gt 35) { $n = $n.Substring(0,32) + "..." }
-            return $n
+            $adapterName = $adapter.Name
+            if ($adapterName.Length -gt 35) { $adapterName = $adapterName.Substring(0, 32) + "..." }
+            return $adapterName
         }
         return "No active adapter"
-    } catch { return "Unable to retrieve" }
+    } catch {
+        return "Unable to retrieve"
+    }
 }
 
 function Show-SystemInfo {
@@ -87,96 +126,178 @@ function Show-SystemInfo {
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
 
-    Write-Host "  Computer Name        : " -NoNewline -ForegroundColor Yellow; Write-Host "$env:COMPUTERNAME" -ForegroundColor White
-    Write-Host "  Current User         : " -NoNewline -ForegroundColor Yellow; Write-Host "$env:USERNAME" -ForegroundColor White
+    # Computer Name
+    $computerName = $env:COMPUTERNAME
+    Write-Host "  🖥️  Computer Name        : " -NoNewline -ForegroundColor Yellow
+    Write-Host "$computerName" -ForegroundColor White
 
+    # Username
+    $userName = $env:USERNAME
+    Write-Host "  👤  Current User         : " -NoNewline -ForegroundColor Yellow
+    Write-Host "$userName" -ForegroundColor White
+
+    # Windows Version
     $winInfo = Get-CorrectWindowsVersion
-    Write-Host "  Windows Version      : " -NoNewline -ForegroundColor Yellow
+    Write-Host "  🪟  Windows Version      : " -NoNewline -ForegroundColor Yellow
     Write-Host "$($winInfo.FullName) (Build $($winInfo.Build))" -ForegroundColor White
     if ($winInfo.VersionFriendly) {
-        Write-Host "                       : " -NoNewline -ForegroundColor Yellow
+        Write-Host "                         : " -NoNewline -ForegroundColor Yellow
         Write-Host "Version $($winInfo.VersionFriendly)" -ForegroundColor Gray
     }
 
+    # Windows Edition
     $winEdition = (Get-ItemProperty "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name EditionID -ErrorAction SilentlyContinue).EditionID
-    Write-Host "  Windows Edition      : " -NoNewline -ForegroundColor Yellow; Write-Host "$winEdition" -ForegroundColor White
-    Write-Host "  Architecture         : " -NoNewline -ForegroundColor Yellow; Write-Host "$env:PROCESSOR_ARCHITECTURE" -ForegroundColor White
+    if (-not $winEdition) {
+        $winEdition = (Get-ItemProperty "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name CompositionEditionID -ErrorAction SilentlyContinue).CompositionEditionID
+    }
+    Write-Host "  📀  Windows Edition      : " -NoNewline -ForegroundColor Yellow
+    Write-Host "$winEdition" -ForegroundColor White
 
+    # System Architecture
+    $arch = $env:PROCESSOR_ARCHITECTURE
+    Write-Host "  🔧  System Architecture  : " -NoNewline -ForegroundColor Yellow
+    Write-Host "$arch" -ForegroundColor White
+
+    # Processor
     $cpu = (Get-CimInstance -ClassName Win32_Processor -ErrorAction SilentlyContinue).Name
-    if ($cpu -and $cpu.Length -gt 50) { $cpu = $cpu.Substring(0,47) + "..." }
-    Write-Host "  Processor            : " -NoNewline -ForegroundColor Yellow
-    Write-Host "$(if($cpu){$cpu}else{'Unable to retrieve'})" -ForegroundColor White
-
-    $ram = (Get-CimInstance -ClassName Win32_ComputerSystem -ErrorAction SilentlyContinue).TotalPhysicalMemory
-    Write-Host "  RAM                  : " -NoNewline -ForegroundColor Yellow
-    Write-Host "$(if($ram){"$([math]::Round($ram/1GB,2)) GB"}else{'Unable to retrieve'})" -ForegroundColor White
-
-    try {
-        $drive = Get-PSDrive -Name C -ErrorAction Stop
-        $free  = [math]::Round($drive.Free/1GB,2)
-        $total = [math]::Round(($drive.Used+$drive.Free)/1GB,2)
-        $pct   = [math]::Round(($drive.Free/($drive.Used+$drive.Free))*100,2)
-        Write-Host "  Disk (C:)            : " -NoNewline -ForegroundColor Yellow
-        Write-Host "$free GB free / $total GB total ($pct% free)" -ForegroundColor White
-    } catch {
-        Write-Host "  Disk (C:)            : " -NoNewline -ForegroundColor Yellow; Write-Host "Unable to retrieve" -ForegroundColor Gray
+    if ($cpu) {
+        if ($cpu.Length -gt 50) { $cpu = $cpu.Substring(0, 47) + "..." }
+        Write-Host "  ⚡  Processor           : " -NoNewline -ForegroundColor Yellow
+        Write-Host "$cpu" -ForegroundColor White
+    } else {
+        Write-Host "  ⚡  Processor           : " -NoNewline -ForegroundColor Yellow
+        Write-Host "Unable to retrieve" -ForegroundColor Gray
     }
 
+    # RAM
+    $ram = (Get-CimInstance -ClassName Win32_ComputerSystem -ErrorAction SilentlyContinue).TotalPhysicalMemory
+    if ($ram) {
+        $ramGB = [math]::Round($ram / 1GB, 2)
+        Write-Host "  💾  RAM                 : " -NoNewline -ForegroundColor Yellow
+        Write-Host "$ramGB GB" -ForegroundColor White
+    } else {
+        Write-Host "  💾  RAM                 : " -NoNewline -ForegroundColor Yellow
+        Write-Host "Unable to retrieve" -ForegroundColor Gray
+    }
+
+    # Disk Space
     try {
-        $act = (Get-CimInstance -ClassName SoftwareLicensingProduct -ErrorAction SilentlyContinue |
-                Where-Object { $_.PartialProductKey -and $_.ApplicationID -eq "55c92734-d682-4d71-983e-d6ec3f16059f" }).LicenseStatus
-        Write-Host "  Activation Status    : " -NoNewline -ForegroundColor Yellow
-        if ($act -eq 1) { Write-Host "ACTIVATED" -ForegroundColor Green } else { Write-Host "NOT ACTIVATED" -ForegroundColor Red }
+        $drive = Get-PSDrive -Name C -ErrorAction Stop
+        $freeSpace = [math]::Round($drive.Free / 1GB, 2)
+        $totalSpace = [math]::Round(($drive.Used + $drive.Free) / 1GB, 2)
+        $freePercent = [math]::Round(($drive.Free / ($drive.Used + $drive.Free)) * 100, 2)
+        Write-Host "  💿  Disk (C:)           : " -NoNewline -ForegroundColor Yellow
+        Write-Host "$freeSpace GB free / $totalSpace GB total ($freePercent% free)" -ForegroundColor White
     } catch {
-        Write-Host "  Activation Status    : " -NoNewline -ForegroundColor Yellow; Write-Host "Unable to determine" -ForegroundColor Gray
+        Write-Host "  💿  Disk (C:)           : " -NoNewline -ForegroundColor Yellow
+        Write-Host "Unable to retrieve" -ForegroundColor Gray
+    }
+
+    # Windows Activation Status
+    try {
+        $activation = (Get-CimInstance -ClassName SoftwareLicensingProduct -ErrorAction SilentlyContinue | 
+                       Where-Object { $_.PartialProductKey -and $_.ApplicationID -eq "55c92734-d682-4d71-983e-d6ec3f16059f" }).LicenseStatus
+        if ($activation -eq 1) {
+            Write-Host "  🔑  Activation Status   : " -NoNewline -ForegroundColor Yellow
+            Write-Host "ACTIVATED" -ForegroundColor Green
+        } else {
+            Write-Host "  🔑  Activation Status   : " -NoNewline -ForegroundColor Yellow
+            Write-Host "NOT ACTIVATED" -ForegroundColor Red
+        }
+    } catch {
+        Write-Host "  🔑  Activation Status   : " -NoNewline -ForegroundColor Yellow
+        Write-Host "Unable to determine" -ForegroundColor Gray
     }
 
     Write-Host ""
     Write-Host "────────────────────────────────────────────────────────────────────────────────" -ForegroundColor DarkGray
 
+    # Internet Connection
     $internetConnected = $false
     try {
-        $internetConnected = Test-Connection -ComputerName "8.8.8.8" -Count 1 -Quiet -ErrorAction Stop -TimeoutSeconds 2
-        Write-Host "  Internet Connection  : " -NoNewline -ForegroundColor Yellow
-        if ($internetConnected) { Write-Host "CONNECTED" -ForegroundColor Green } else { Write-Host "DISCONNECTED" -ForegroundColor Red }
+        $test = Test-Connection -ComputerName "8.8.8.8" -Count 1 -Quiet -ErrorAction Stop -TimeoutSeconds 2
+        $internetConnected = $test
+        Write-Host "  🌐  Internet Connection : " -NoNewline -ForegroundColor Yellow
+        if ($test) {
+            Write-Host "CONNECTED" -ForegroundColor Green
+        } else {
+            Write-Host "DISCONNECTED" -ForegroundColor Red
+        }
     } catch {
-        Write-Host "  Internet Connection  : " -NoNewline -ForegroundColor Yellow; Write-Host "DISCONNECTED" -ForegroundColor Red
+        Write-Host "  🌐  Internet Connection : " -NoNewline -ForegroundColor Yellow
+        Write-Host "DISCONNECTED" -ForegroundColor Red
     }
 
-    Write-Host "  Local IP Address     : " -NoNewline -ForegroundColor Yellow; Write-Host "$(Get-LocalIP)" -ForegroundColor White
+    # Local IP Address
+    $localIP = Get-LocalIP
+    Write-Host "  🏠  Local IP Address    : " -NoNewline -ForegroundColor Yellow
+    Write-Host "$localIP" -ForegroundColor White
 
+    # Public IP Address (if connected)
     if ($internetConnected) {
-        $pub = Get-PublicIP
-        Write-Host "  Public IP Address    : " -NoNewline -ForegroundColor Yellow
-        Write-Host "$pub" -ForegroundColor $(if($pub -eq "Not connected"){"Gray"}else{"White"})
+        $publicIP = Get-PublicIP
+        Write-Host "  🌍  Public IP Address   : " -NoNewline -ForegroundColor Yellow
+        if ($publicIP -eq "Not connected") {
+            Write-Host "$publicIP" -ForegroundColor Gray
+        } else {
+            Write-Host "$publicIP" -ForegroundColor White
+        }
     } else {
-        Write-Host "  Public IP Address    : " -NoNewline -ForegroundColor Yellow; Write-Host "Not connected" -ForegroundColor Gray
+        Write-Host "  🌍  Public IP Address   : " -NoNewline -ForegroundColor Yellow
+        Write-Host "Not connected" -ForegroundColor Gray
     }
 
-    Write-Host "  Network Adapter      : " -NoNewline -ForegroundColor Yellow; Write-Host "$(Get-NetworkAdapter)" -ForegroundColor White
+    # Network Adapter
+    $adapterName = Get-NetworkAdapter
+    Write-Host "  🔌  Network Adapter     : " -NoNewline -ForegroundColor Yellow
+    Write-Host "$adapterName" -ForegroundColor White
 
+    # Gateway IP
     try {
-        $gw = (Get-NetRoute -DestinationPrefix "0.0.0.0/0" -ErrorAction SilentlyContinue | Select-Object -First 1).NextHop
-        if ($gw) { Write-Host "  Default Gateway      : " -NoNewline -ForegroundColor Yellow; Write-Host "$gw" -ForegroundColor White }
+        $gateway = (Get-NetRoute -DestinationPrefix "0.0.0.0/0" -ErrorAction SilentlyContinue | 
+                    Select-Object -First 1).NextHop
+        if ($gateway) {
+            Write-Host "  🚪  Default Gateway     : " -NoNewline -ForegroundColor Yellow
+            Write-Host "$gateway" -ForegroundColor White
+        }
     } catch {}
 
     Write-Host ""
     Write-Host "────────────────────────────────────────────────────────────────────────────────" -ForegroundColor DarkGray
 
+    # Last Boot Time
     $lastBoot = (Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue).LastBootUpTime
     if ($lastBoot) {
-        $up = (Get-Date) - $lastBoot
-        Write-Host "  Last Boot            : " -NoNewline -ForegroundColor Yellow; Write-Host "$lastBoot" -ForegroundColor White
-        Write-Host "  System Uptime        : " -NoNewline -ForegroundColor Yellow; Write-Host "$($up.Days)d $($up.Hours)h $($up.Minutes)m" -ForegroundColor White
+        $uptime = (Get-Date) - $lastBoot
+        $days = $uptime.Days
+        $hours = $uptime.Hours
+        $minutes = $uptime.Minutes
+        Write-Host "  ⏰  Last Boot          : " -NoNewline -ForegroundColor Yellow
+        Write-Host "$lastBoot" -ForegroundColor White
+        Write-Host "  🕐  System Uptime      : " -NoNewline -ForegroundColor Yellow
+        Write-Host "$days days, $hours hours, $minutes minutes" -ForegroundColor White
+    } else {
+        Write-Host "  ⏰  Last Boot          : " -NoNewline -ForegroundColor Yellow
+        Write-Host "Unable to retrieve" -ForegroundColor Gray
     }
 
     Write-Host ""
     Write-Host "────────────────────────────────────────────────────────────────────────────────" -ForegroundColor DarkGray
 
+    # Winget Version
     $wingetVer = winget --version 2>$null
-    Write-Host "  Winget Version       : " -NoNewline -ForegroundColor Yellow
-    Write-Host "$(if($wingetVer){$wingetVer}else{'NOT INSTALLED'})" -ForegroundColor $(if($wingetVer){"White"}else{"Red"})
-    Write-Host "  PowerShell Version   : " -NoNewline -ForegroundColor Yellow; Write-Host "$($PSVersionTable.PSVersion)" -ForegroundColor White
+    if ($wingetVer) {
+        Write-Host "  📦  Winget Version     : " -NoNewline -ForegroundColor Yellow
+        Write-Host "$wingetVer" -ForegroundColor White
+    } else {
+        Write-Host "  📦  Winget Version     : " -NoNewline -ForegroundColor Yellow
+        Write-Host "NOT INSTALLED (Install from Microsoft Store)" -ForegroundColor Red
+    }
+
+    # PowerShell Version
+    $psVer = $PSVersionTable.PSVersion.ToString()
+    Write-Host "  ⚙️   PowerShell Version : " -NoNewline -ForegroundColor Yellow
+    Write-Host "$psVer" -ForegroundColor White
 
     Write-Host ""
     Write-Host "================================================================================" -ForegroundColor Cyan
@@ -184,7 +305,7 @@ function Show-SystemInfo {
 }
 
 #===============================================================================
-# APPS LIST
+# APPS LIST (Winget + Custom)
 #===============================================================================
 $AppsList = @(
     @{Num=1;  Name="Google Chrome";          Id="Google.Chrome";                          Type="winget"}
@@ -313,7 +434,8 @@ function Get-LatestVersion { param($App)
 # MODULE 1 — WINGET MANAGER
 #===============================================================================
 function Show-AllSystemApps {
-    Clear-Host; Show-Signature
+    Clear-Host
+    Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                All Installed Applications - Version Viewer" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
@@ -386,7 +508,8 @@ function Show-AllSystemApps {
 }
 
 function Update-Selective {
-    Clear-Host; Show-Signature
+    Clear-Host
+    Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                   Selective Winget Update Manager" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
@@ -398,8 +521,14 @@ function Update-Selective {
         if ($line -match "^-+---") { $found = $true; continue }
         if ($found -and $line.Trim() -ne "") {
             $p = $line -split '\s{2,}'
-            if ($p.Count -ge 4 -and $p[0] -match "[a-zA-Z0-9]") {
-                $uList += [PSCustomObject]@{ Id=$p[0].Trim(); Name=$p[1].Trim(); Current=$p[2].Trim(); Available=$p[3].Trim() }
+            # تحسين: تحقق من وجود اسم ومعرف صحيحين
+            if ($p.Count -ge 4 -and $p[0] -match "[a-zA-Z0-9\.\-]+" -and $p[0] -ne "Id" -and $p[1] -notmatch "Version|Available") {
+                $uList += [PSCustomObject]@{ 
+                    Id = $p[0].Trim(); 
+                    Name = $p[1].Trim(); 
+                    Current = $p[2].Trim(); 
+                    Available = $p[3].Trim() 
+                }
             }
         }
     }
@@ -416,7 +545,9 @@ function Update-Selective {
         Write-Host "($($uList[$i].Current) -> $($uList[$i].Available))" -ForegroundColor Yellow
     }
 
-    Write-Host ""; Write-Host "Options: numbers 1,2,3  |  'all'  |  '0' to go back" -ForegroundColor Gray; Write-Host ""
+    Write-Host ""
+    Write-Host "Options: numbers 1,2,3  |  'all'  |  '0' to go back" -ForegroundColor Gray
+    Write-Host ""
     $userInput = Read-Host "Your choice"
     if ($userInput -eq "0") { return }
 
@@ -424,30 +555,62 @@ function Update-Selective {
     if ($userInput -eq "all") { $toUpdate = $uList }
     else {
         foreach ($n in ($userInput -split ",")) {
-            $idx = [int]$n.Trim() - 1
-            if ($idx -ge 0 -and $idx -lt $uList.Count) { $toUpdate += $uList[$idx] }
+            $n = $n.Trim()
+            if ($n -match "^\d+$") {
+                $idx = [int]$n - 1
+                if ($idx -ge 0 -and $idx -lt $uList.Count) { 
+                    $toUpdate += $uList[$idx] 
+                }
+            }
         }
     }
 
-    if ($toUpdate.Count -eq 0) { Write-Host "No valid selection!" -ForegroundColor Red; Read-Host "Press Enter"; return }
+    if ($toUpdate.Count -eq 0) { 
+        Write-Host "No valid selection!" -ForegroundColor Red
+        Write-Host ""; Read-Host "Press Enter to return"; 
+        return 
+    }
 
     Write-Host ""; Write-Host "Selected:" -ForegroundColor Green
-    $toUpdate | ForEach-Object { Write-Host "  - $($_.Name)" -ForegroundColor White }
+    foreach ($app in $toUpdate) { 
+        Write-Host "  - $($app.Name)" -ForegroundColor White 
+    }
     Write-Host ""
     $confirm = Read-Host "Proceed? (y/n)"
-    if ($confirm -ne "y" -and $confirm -ne "Y") { Write-Host "Cancelled!" -ForegroundColor Red; Read-Host "Press Enter"; return }
+    if ($confirm -ne "y" -and $confirm -ne "Y") { 
+        Write-Host "Cancelled!" -ForegroundColor Red
+        Write-Host ""; Read-Host "Press Enter to return"; 
+        return 
+    }
 
     Write-Host ""; Write-Host "Starting updates..." -ForegroundColor Yellow; Write-Host ""
+    
+    $successCount = 0
+    $failCount = 0
+    
     foreach ($app in $toUpdate) {
         Write-Host ">>> Updating $($app.Name)..." -ForegroundColor Cyan
-        winget upgrade $app.Id --accept-package-agreements --accept-source-agreements --silent
-        if ($LASTEXITCODE -eq 0) { Write-Host "[OK] $($app.Name) updated!" -ForegroundColor Green }
-        else { Write-Host "[FAIL] $($app.Name)" -ForegroundColor Red }
+        
+        # محاولة التحديث باستخدام winget
+        $result = winget upgrade $app.Id --accept-package-agreements --accept-source-agreements --silent 2>&1
+        
+        if ($LASTEXITCODE -eq 0) { 
+            Write-Host "[OK] $($app.Name) updated successfully!" -ForegroundColor Green
+            $successCount++
+        } elseif ($LASTEXITCODE -eq 1 -or $LASTEXITCODE -eq -1978335189) {
+            Write-Host "[INFO] $($app.Name) is already up to date or not found" -ForegroundColor Yellow
+            $successCount++
+        } else {
+            Write-Host "[FAIL] Failed to update $($app.Name) (Error: $LASTEXITCODE)" -ForegroundColor Red
+            Write-Host "       Try updating manually using: winget upgrade `"$($app.Id)`"" -ForegroundColor Gray
+            $failCount++
+        }
         Write-Host ""
     }
 
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "Done!" -ForegroundColor Green
+    Write-Host "Update process completed! (Success: $successCount, Failed: $failCount)" -ForegroundColor Green
+    Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""; Read-Host "Press Enter to return"
 }
 
@@ -455,7 +618,8 @@ function Update-Selective {
 # MODULE 2 — APP SCANNER + DIRECT INSTALLER
 #===============================================================================
 function Show-AppsList {
-    Clear-Host; Show-Signature
+    Clear-Host
+    Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                    Available Applications (Three Columns)" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan; Write-Host ""
@@ -483,7 +647,8 @@ function Show-AppsList {
 }
 
 function Scan-InstalledApps {
-    Clear-Host; Show-Signature
+    Clear-Host
+    Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                    Scanning Installed Applications" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
@@ -494,8 +659,10 @@ function Scan-InstalledApps {
         $current++
         Write-Progress -Activity "Scanning..." -Status $app.Name -PercentComplete (($current/$total)*100)
         if ($app.Type -eq "custom") {
-            $p = if ($app.Name -eq "Neat Download Manager") { "$env:ProgramFiles\NeatDM\NeatDM.exe" }
-                 else { "$env:ProgramFiles\Winshot\winshot.exe" }
+            $p = "$env:ProgramFiles\Winshot\winshot.exe"
+            if ($app.Name -eq "Neat Download Manager") {
+                $p = "$env:ProgramFiles\NeatDM\NeatDM.exe"
+            }
             if (Test-Path $p) {
                 $v = (Get-Item $p).VersionInfo.FileVersion
                 $results += [PSCustomObject]@{ Num=$app.Num; Name=$app.Name; Current=if($v){$v}else{"Installed"}; Latest="Latest" }
@@ -510,7 +677,8 @@ function Scan-InstalledApps {
     }
     Write-Progress -Activity "Scanning..." -Completed
 
-    Clear-Host; Show-Signature
+    Clear-Host
+    Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host "                    Installed Applications Report" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
@@ -557,24 +725,28 @@ function Install-ByNumbers {
         } else {
             Write-Host ">>> Installing $($app.Name)..." -ForegroundColor Cyan
             winget install $app.Id --accept-package-agreements --accept-source-agreements --silent
-            if ($LASTEXITCODE -in 0,1,-1978335189) { Write-Host "[OK] $($app.Name) installed!" -ForegroundColor Green }
-            else { Write-Host "[FAIL] $($app.Name) (Error: $LASTEXITCODE)" -ForegroundColor Red }
+            if ($LASTEXITCODE -in 0,1,-1978335189) {
+                Write-Host "[OK] $($app.Name) installed!" -ForegroundColor Green
+            } else {
+                Write-Host "[FAIL] $($app.Name) (Error: $LASTEXITCODE)" -ForegroundColor Red
+                Write-Host "       Try installing manually from official website" -ForegroundColor Gray
+            }
         }
         Write-Host ""
     }
 }
 
 #===============================================================================
-# MODULE 3 — ACTIVATION TOOLS
+# MODULE 3 — IDM ACTIVATION
 #===============================================================================
-function Run-ActivationMenu {
-    Clear-Host; Show-Signature
+function Run-IDMActivation {
+    Clear-Host
+    Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "                        Activation Tools" -ForegroundColor Magenta
+    Write-Host "                   IDM Activation Script (IAS)" -ForegroundColor Magenta
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "   [1] Windows Activation  (MAS - Microsoft Activation Scripts)" -ForegroundColor Green
-    Write-Host "   [2] IDM Activation      (IAS - IDM Activation Script)" -ForegroundColor Cyan
+    Write-Host "   [1] Download and run IDM Activation" -ForegroundColor Green
     Write-Host "   [0] Back to main menu" -ForegroundColor Gray
     Write-Host ""
     Write-Host "================================================================================" -ForegroundColor Cyan
@@ -582,80 +754,37 @@ function Run-ActivationMenu {
 
     $subChoice = Read-Host "Enter your choice"
 
-    switch ($subChoice) {
-        "0" { return }
+    if ($subChoice -eq "0") { return }
 
-        "1" {
-            Clear-Host; Show-Signature
-            Write-Host "================================================================================" -ForegroundColor Cyan
-            Write-Host "              Windows Activation - MAS (Microsoft Activation Scripts)" -ForegroundColor Green
-            Write-Host "================================================================================" -ForegroundColor Cyan
+    if ($subChoice -eq "1") {
+        Write-Host ""; Write-Host "Downloading IAS script..." -ForegroundColor Yellow
+        try {
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            $iasPath = "$env:TEMP\IAS.cmd"
+            Invoke-WebRequest -Uri "https://raw.githubusercontent.com/MARKETTV1/idm/refs/heads/main/IAS.cmd" -OutFile $iasPath -ErrorAction Stop
+            Write-Host "Download complete! Launching..." -ForegroundColor Green
             Write-Host ""
-            Write-Host "   [1] Run Windows Activation" -ForegroundColor Green
-            Write-Host "   [0] Back" -ForegroundColor Gray
-            Write-Host ""
-            $c = Read-Host "Enter your choice"
-            if ($c -eq "1") {
-                Write-Host ""; Write-Host "Launching MAS..." -ForegroundColor Yellow; Write-Host ""
-                try {
-                    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-                    $masScript = (Invoke-WebRequest -Uri "https://get.activated.win" -UseBasicParsing -ErrorAction Stop).Content
-                    $tmpFile = "$env:TEMP\MAS_temp.ps1"
-                    Set-Content -Path $tmpFile -Value $masScript -Encoding UTF8
-                    Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -File `"$tmpFile`"" -Verb RunAs -Wait
-                    Remove-Item $tmpFile -Force -ErrorAction SilentlyContinue
-                    Write-Host ""; Write-Host "Windows Activation script finished." -ForegroundColor Green
-                } catch {
-                    Write-Host ""; Write-Host "[ERROR] $($_.Exception.Message)" -ForegroundColor Red
-                    Write-Host "Try running manually: irm https://get.activated.win | iex" -ForegroundColor Gray
-                }
-            }
-            Write-Host ""; Read-Host "Press Enter to return to activation menu"
-            Run-ActivationMenu
+            Start-Process cmd.exe -ArgumentList "/c `"$iasPath`"" -Verb RunAs -Wait
+            Write-Host ""; Write-Host "IDM Activation finished." -ForegroundColor Green
+        } catch {
+            Write-Host ""; Write-Host "[ERROR] $($_.Exception.Message)" -ForegroundColor Red
         }
-
-        "2" {
-            Clear-Host; Show-Signature
-            Write-Host "================================================================================" -ForegroundColor Cyan
-            Write-Host "                   IDM Activation Script (IAS)" -ForegroundColor Cyan
-            Write-Host "================================================================================" -ForegroundColor Cyan
-            Write-Host ""
-            Write-Host "   [1] Download and run IDM Activation" -ForegroundColor Green
-            Write-Host "   [0] Back" -ForegroundColor Gray
-            Write-Host ""
-            $c = Read-Host "Enter your choice"
-            if ($c -eq "1") {
-                Write-Host ""; Write-Host "Downloading IAS script..." -ForegroundColor Yellow
-                try {
-                    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-                    $iasPath = "$env:TEMP\IAS.cmd"
-                    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/MARKETTV1/idm/refs/heads/main/IAS.cmd" -OutFile $iasPath -ErrorAction Stop
-                    Write-Host "Download complete! Launching..." -ForegroundColor Green; Write-Host ""
-                    Start-Process cmd.exe -ArgumentList "/c `"$iasPath`"" -Verb RunAs -Wait
-                    Write-Host ""; Write-Host "IDM Activation finished." -ForegroundColor Green
-                } catch {
-                    Write-Host ""; Write-Host "[ERROR] $($_.Exception.Message)" -ForegroundColor Red
-                }
-            }
-            Write-Host ""; Read-Host "Press Enter to return to activation menu"
-            Run-ActivationMenu
-        }
-
-        default {
-            Write-Host "Invalid choice!" -ForegroundColor Red
-            Start-Sleep -Seconds 1
-            Run-ActivationMenu
-        }
+    } else {
+        Write-Host "Invalid choice!" -ForegroundColor Red
     }
+
+    Write-Host ""
+    Read-Host "Press Enter to return to main menu"
 }
 
 #===============================================================================
 # MAIN MENU
 #===============================================================================
 function Show-MainMenu {
-    Clear-Host; Show-Signature
+    Clear-Host
+    Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "              All-in-One Windows Manager v5.5 - by KARIM ABU RIDA" -ForegroundColor White
+    Write-Host "              All-in-One Windows Manager v5.6 - by KARIM ABU RIDA" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "   ── WINGET MANAGER ─────────────────────────────────────────────" -ForegroundColor DarkGray
@@ -667,8 +796,8 @@ function Show-MainMenu {
     Write-Host "   [4] Scan and show installed apps with versions" -ForegroundColor Cyan
     Write-Host "   [5] Install apps directly by number" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "   ── ACTIVATION TOOLS ─────────────────────────────────────────" -ForegroundColor DarkGray
-    Write-Host "   [6] Activation Tools  (Windows MAS + IDM IAS)" -ForegroundColor Magenta
+    Write-Host "   ── ACTIVATION ───────────────────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "   [6] IDM Activation (Internet Download Manager)" -ForegroundColor Magenta
     Write-Host ""
     Write-Host "   [7] Exit" -ForegroundColor Red
     Write-Host ""
@@ -678,10 +807,11 @@ function Show-MainMenu {
 }
 
 #===============================================================================
-# STARTUP — SYSTEM INFO
+# INITIAL SYSTEM INFO DISPLAY (Once at startup)
 #===============================================================================
 Show-Signature
 Show-SystemInfo
+Write-Host ""
 Write-Host "Press any key to continue to main menu..." -ForegroundColor Yellow
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 
@@ -710,15 +840,19 @@ do {
             if ($raw -ne "0") {
                 $raw = $raw -replace " ",","
                 $nums = @()
-                foreach ($n in ($raw -split ",")) { if ($n.Trim() -match "^\d+$") { $nums += [int]$n.Trim() } }
+                foreach ($n in ($raw -split ",")) { 
+                    $n = $n.Trim()
+                    if ($n -match "^\d+$") { $nums += [int]$n }
+                }
                 if ($nums.Count -gt 0) { Install-ByNumbers -Numbers $nums }
                 else { Write-Host "No valid numbers!" -ForegroundColor Red }
                 Read-Host "`nPress Enter to continue"
             }
         }
-        "6" { Run-ActivationMenu }
+        "6" { Run-IDMActivation }
         "7" {
-            Clear-Host; Show-Signature
+            Clear-Host
+            Show-Signature
             Write-Host ""
             Write-Host "================================================================================" -ForegroundColor Cyan
             Write-Host "                   Thank you for using All-in-One Manager!" -ForegroundColor White
