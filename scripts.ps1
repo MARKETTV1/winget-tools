@@ -1,6 +1,6 @@
 #===============================================================================
 # KARIM ABU RIDA - All-in-One Windows Manager
-# Version: 5.9
+# Version: 5.0
 # Tools: System Info + Winget Manager + App Scanner/Installer + IDM Activation
 # GitHub: MARKETTV1
 #===============================================================================
