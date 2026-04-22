@@ -129,8 +129,6 @@ function Show-SystemInfo {
     Write-Host "  Windows Edition      : " -NoNewline -ForegroundColor Yellow
     Write-Host "$winEdition" -ForegroundColor White
 
-    Write-Host "  Architecture         : " -NoNewline -ForegroundColor Yellow
-    Write-Host "$env:PROCESSOR_ARCHITECTURE" -ForegroundColor White
 
     $cpu = (Get-CimInstance -ClassName Win32_Processor -ErrorAction SilentlyContinue).Name
     if ($cpu -and $cpu.Length -gt 50) { $cpu = $cpu.Substring(0,47) + "..." }
@@ -162,7 +160,19 @@ function Show-SystemInfo {
         Write-Host "  Activation Status    : " -NoNewline -ForegroundColor Yellow
         Write-Host "Unable to determine" -ForegroundColor Gray
     }
-
+    function Get-SystemArchitecture {
+    $arch = $env:PROCESSOR_ARCHITECTURE
+    if ($arch -eq "AMD64") { return "x64 (64-bit)" }
+    if ($arch -eq "ARM64") { return "ARM64 (64-bit)" }
+    if ($arch -eq "x86") {
+        # تحقق مما إذا كان يعمل في وضع WOW64 (32-bit على 64-bit)
+        if ([Environment]::Is64BitOperatingSystem) {
+            return "x64 (64-bit) - PowerShell running in 32-bit mode"
+        }
+        return "x86 (32-bit)"
+    }
+    return $arch
+}
     Write-Host ""
     Write-Host "────────────────────────────────────────────────────────────────────────────────" -ForegroundColor DarkGray
 
