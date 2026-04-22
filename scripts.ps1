@@ -8,25 +8,17 @@
 Clear-Host
 
 function Show-Signature {
-    Write-Host ""
-    Write-Host "  ╔══════════════════════════════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-    Write-Host "  ║                                                                                          ║" -ForegroundColor Cyan
-    Write-Host "  ║    ██╗  ██╗ █████╗ ██████╗ ██╗███╗   ███╗    █████╗ ██████╗ ██╗   ██╗                     ║" -ForegroundColor Cyan
-    Write-Host "  ║    ██║ ██╔╝██╔══██╗██╔══██╗██║████╗ ████║    ██╔══██╗██╔══██╗██║   ██║                     ║" -ForegroundColor Cyan
-    Write-Host "  ║    █████╔╝ ███████║██████╔╝██║██╔████╔██║    ██████╔╝██║  ██║██║   ██║                     ║" -ForegroundColor Cyan
-    Write-Host "  ║    ██╔═██╗ ██╔══██║██╔══██╗██║██║╚██╔╝██║    ██╔══██╗██║  ██║██║   ██║                     ║" -ForegroundColor Cyan
-    Write-Host "  ║    ██║  ██╗██║  ██║██║  ██║██║██║ ╚═╝ ██║    ██║  ██║██████╔╝╚██████╔╝                     ║" -ForegroundColor Cyan
-    Write-Host "  ║    ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝    ╚═╝  ╚═╝╚═════╝  ╚═════╝                      ║" -ForegroundColor Cyan
-    Write-Host "  ║                                                                                          ║" -ForegroundColor Cyan
-    Write-Host "  ║                                    ALL-IN-ONE WINDOWS MANAGER                            ║" -ForegroundColor White
-    Write-Host "  ║                                                                                          ║" -ForegroundColor Cyan
-    Write-Host "  ║                         ╔══════════════════════════════════════════════╗                 ║" -ForegroundColor Yellow
-    Write-Host "  ║                         ║           KARIM ABU RIDA                      ║                 ║" -ForegroundColor Yellow
-    Write-Host "  ║                         ║           GitHub: MARKETTV1                   ║                 ║" -ForegroundColor Yellow
-    Write-Host "  ║                         ╚══════════════════════════════════════════════╝                 ║" -ForegroundColor Yellow
-    Write-Host "  ║                                                                                          ║" -ForegroundColor Cyan
-    Write-Host "  ╚══════════════════════════════════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
-    Write-Host ""
+    Write-Host "                                                                  " -ForegroundColor DarkGray
+    Write-Host "   ██╗  ██╗ █████╗ ██████╗ ██╗███╗   ███╗    █████╗ ██████╗ ██╗   ██╗    ██████╗ ██╗██████╗  █████╗ " -ForegroundColor Cyan
+    Write-Host "   ██║ ██╔╝██╔══██╗██╔══██╗██║████╗ ████║    ██╔══██╗██╔══██╗██║   ██║    ██╔══██╗██║██╔══██╗██╔══██╗" -ForegroundColor Cyan
+    Write-Host "   █████╔╝ ███████║██████╔╝██║██╔████╔██║    ██████╔╝██║██  ║██║   ██║    ██████╔╝██║██║  ██║███████║" -ForegroundColor Cyan
+    Write-Host "   ██╔═██╗ ██╔══██║██╔══██╗██║██║╚██╔╝██║    ██╔══██╗██║  ██║██║   ██║    ██╔══██╗██║██║  ██║██╔══██║" -ForegroundColor Cyan
+    Write-Host "   ██║  ██╗██║  ██║██║  ██║██║██║ ╚═╝ ██║    ██║  ██║██████╔╝╚██████╔╝    ██║  ██║██║██████╔╝██║  ██║" -ForegroundColor Cyan
+    Write-Host "   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝    ╚═╝  ╚═╝╚═════╝  ╚═════╝     ╚═╝  ╚═╝╚═╝╚═════╝ ╚═╝  ╚═╝" -ForegroundColor Cyan
+    Write-Host "                                                                  " -ForegroundColor DarkGray
+    Write-Host "                              Created by: KARIM ABU RIDA           " -ForegroundColor Yellow
+    Write-Host "                              GitHub: MARKETTV1                    " -ForegroundColor Yellow
+    Write-Host "                                                                  " -ForegroundColor DarkGray
 }
 
 #===============================================================================
