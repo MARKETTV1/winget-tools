@@ -11,10 +11,10 @@ function Show-Signature {
     Write-Host "                                                                  " -ForegroundColor DarkGray
     Write-Host "   ██╗  ██╗ █████╗ ██████╗ ██╗███╗   ███╗     █████ ╗ ██████╗ ██╗   ██╗    ██████╗ ██╗██████╗  █████╗ " -ForegroundColor Cyan
     Write-Host "   ██║ ██╔╝██╔══██╗██╔══██╗██║████╗ ████║    ██╔══██╗ ██╔══██╗██║   ██║    ██╔══██╗██║██╔══██╗██╔══██╗" -ForegroundColor Cyan
-    Write-Host "   █████╔╝ ███████║██████╔╝██║██╔████╔██║    ███████║ ██████ ║██║   ██║    ██████╔╝██║██║  ██║███████║" -ForegroundColor Cyan
+    Write-Host "   █████╔╝ ███████║██████╔╝██║██╔████╔██║    ███████║ ██████ ║██║   ██║    █████ ╔╝██║██║  ██║███████║" -ForegroundColor Cyan
     Write-Host "   ██╔═██╗ ██╔══██║██╔══██╗██║██║╚██╔╝██║    ██╔══██╗ ██║  ██║██║   ██║    ██╔══██╗██║██║  ██║██╔══██║" -ForegroundColor Cyan
-    Write-Host "   ██║  ██╗██║  ██║██║  ██║██║██║ ╚═╝ ██║    ██║  ██ ██████╔╝╚██████╔╝    ██║  ██║██║██████╔╝██║  ██║" -ForegroundColor Cyan
-    Write-Host "   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝    ╚═╝  ╚═╝╚═════╝  ╚═════╝     ╚═╝  ╚═╝╚═╝╚═════╝ ╚═╝  ╚═╝" -ForegroundColor Cyan
+    Write-Host "   ██║  ██╗██║  ██║██║  ██║██║██║ ╚═╝ ██║    ██║  ██  ██████╔╝╚██████╔╝    ██║  ██║██║██████╔╝██║  ██║" -ForegroundColor Cyan
+    Write-Host "   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝    ╚═╝  ╚═╝╚═════╝  ╚═════╝      ╚═╝  ╚═╝╚═╝╚═════╝ ╚═╝  ╚═╝" -ForegroundColor Cyan
     Write-Host "                                                                  " -ForegroundColor DarkGray
     Write-Host "                              Created by: KARIM ABU RIDA           " -ForegroundColor Yellow
     Write-Host "                              GitHub: MARKETTV1                    " -ForegroundColor Yellow
