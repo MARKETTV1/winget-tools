@@ -1,6 +1,6 @@
 #===============================================================================
 # KARIM ABU RIDA - All-in-One Windows Manager
-# Version: 6.1 (Complete Working Version)
+# Version: 6.2 (Improved Number Input)
 # Tools: System Info + Winget Manager + App Scanner/Installer + Activation Tools
 # GitHub: MARKETTV1
 #===============================================================================
@@ -474,7 +474,8 @@ function Update-Selective {
 
     Write-Host "Available updates:" -ForegroundColor Green; Write-Host ""
     for ($i=0; $i -lt $validApps.Count; $i++) {
-        Write-Host "[$($i+1)] " -NoNewline -ForegroundColor Cyan        Write-Host "$($validApps[$i].Name) " -NoNewline -ForegroundColor White
+        Write-Host "[$($i+1)] " -NoNewline -ForegroundColor Cyan
+        Write-Host "$($validApps[$i].Name) " -NoNewline -ForegroundColor White
         Write-Host "($($validApps[$i].Current) -> $($validApps[$i].Available))" -ForegroundColor Yellow
     }
 
@@ -613,34 +614,76 @@ function Scan-InstalledApps {
     return $results
 }
 
+#===============================================================================
+# INSTALL BY NUMBERS - IMPROVED VERSION (تقبل الأرقام المفردة والمتعددة)
+#===============================================================================
 function Install-ByNumbers {
     param($Numbers)
-    $selected = $AppsList | Where-Object { $Numbers -contains $_.Num }
-    if (-not $selected) { Write-Host "No valid apps selected!" -ForegroundColor Red; return }
+    
+    # تحويل الإدخال إلى مصفوفة أرقام (تقبل 10 و 10,15 و 10 15)
+    $selectedApps = @()
+    
+    # إذا كان Numbers نصاً، قم بتحليله
+    if ($Numbers -is [string]) {
+        # استبدال المسافات بفواصل وتقسيم
+        $Numbers = $Numbers -replace " ", ","
+        $numberArray = $Numbers -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ -match "^\d+$" }
+        foreach ($num in $numberArray) {
+            $selectedApps += $AppsList | Where-Object { $_.Num -eq [int]$num }
+        }
+    } else {
+        # إذا كان Numbers مصفوفة بالفعل
+        foreach ($num in $Numbers) {
+            $selectedApps += $AppsList | Where-Object { $_.Num -eq $num }
+        }
+    }
+    
+    if ($selectedApps.Count -eq 0) { 
+        Write-Host "No valid apps selected!" -ForegroundColor Red
+        Write-Host "Enter numbers like: 10  or  5,10,15  or  5 10 15" -ForegroundColor Gray
+        return 
+    }
 
     Write-Host ""; Write-Host "Selected:" -ForegroundColor Green
-    foreach ($app in $selected) {
+    foreach ($app in $selectedApps) {
         Write-Host "  - $($app.Name)$(if($app.Type -eq 'custom'){' (custom)'})" -ForegroundColor White
     }
     Write-Host ""
     $confirm = Read-Host "Proceed with installation? (y/n)"
-    if ($confirm -ne "y") { Write-Host "Cancelled." -ForegroundColor Red; return }
+    if ($confirm -ne "y" -and $confirm -ne "Y") { 
+        Write-Host "Cancelled." -ForegroundColor Red
+        return 
+    }
 
     Write-Host ""; Write-Host "Starting installation..." -ForegroundColor Yellow; Write-Host ""
-    foreach ($app in $selected) {
+    $successCount = 0
+    $failCount = 0
+    
+    foreach ($app in $selectedApps) {
         if ($app.Type -eq "custom") {
-            Install-CustomApp -App $app
+            if (Install-CustomApp -App $app) { $successCount++ } else { $failCount++ }
         } else {
             Write-Host ">>> Installing $($app.Name)..." -ForegroundColor Cyan
-            winget install $app.Id --accept-package-agreements --accept-source-agreements --silent
-            if ($LASTEXITCODE -in 0,1,-1978335189) { Write-Host "[OK] $($app.Name) installed!" -ForegroundColor Green }
-            else {
+            $result = winget install $app.Id --accept-package-agreements --accept-source-agreements --silent 2>&1
+            if ($LASTEXITCODE -in 0,1,-1978335189) { 
+                Write-Host "[OK] $($app.Name) installed!" -ForegroundColor Green
+                $successCount++
+            } else {
                 Write-Host "[FAIL] $($app.Name) (Error: $LASTEXITCODE)" -ForegroundColor Red
-                Write-Host "       Try installing manually from official website" -ForegroundColor Gray
+                if ($result -match "already installed") {
+                    Write-Host "       This app is already installed." -ForegroundColor Gray
+                } else {
+                    Write-Host "       Try installing manually from official website" -ForegroundColor Gray
+                }
+                $failCount++
             }
         }
         Write-Host ""
     }
+    
+    Write-Host "================================================================================" -ForegroundColor Cyan
+    Write-Host "Installation completed! (Success: $successCount | Failed: $failCount)" -ForegroundColor Green
+    Write-Host "================================================================================" -ForegroundColor Cyan
 }
 
 #===============================================================================
@@ -734,7 +777,7 @@ function Run-ActivationMenu {
 function Show-MainMenu {
     Clear-Host; Show-Signature
     Write-Host "================================================================================" -ForegroundColor Cyan
-    Write-Host "              All-in-One Windows Manager v6.1 - by KARIM ABU RIDA" -ForegroundColor White
+    Write-Host "              All-in-One Windows Manager v6.2 - by KARIM ABU RIDA" -ForegroundColor White
     Write-Host "================================================================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "   ── WINGET MANAGER ─────────────────────────────────────────────" -ForegroundColor DarkGray
@@ -782,19 +825,12 @@ do {
         "5" {
             Show-AppsList
             Write-Host ""
-            Write-Host "  Examples: 1,2,3  or  1 2 3" -ForegroundColor Gray
+            Write-Host "  Examples: 10  or  5,10,15  or  5 10 15" -ForegroundColor Gray
             Write-Host "  [0] Back to main menu" -ForegroundColor Gray
             Write-Host ""
             $raw = Read-Host "Enter numbers"
-            if ($raw -ne "0") {
-                $raw = $raw -replace " ",","
-                $nums = @()
-                foreach ($n in ($raw -split ",")) {
-                    $n = $n.Trim()
-                    if ($n -match "^\d+$") { $nums += [int]$n }
-                }
-                if ($nums.Count -gt 0) { Install-ByNumbers -Numbers $nums }
-                else { Write-Host "No valid numbers!" -ForegroundColor Red }
+            if ($raw -ne "0" -and $raw -ne "") {
+                Install-ByNumbers -Numbers $raw
                 Read-Host "`nPress Enter to continue"
             }
         }
